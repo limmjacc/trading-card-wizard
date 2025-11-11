@@ -1,0 +1,45 @@
+.card {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+    background-color: #fff;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-image {
+    width: 100%;
+    height: auto;
+}
+
+.card-content {
+    padding: 16px;
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin: 0;
+    color: #333;
+}
+
+.card-description {
+    font-size: 1em;
+    color: #666;
+    margin: 8px 0;
+}
+
+.card-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.card-symbol {
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+}

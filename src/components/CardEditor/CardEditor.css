@@ -1,0 +1,60 @@
+.card-editor {
+    display: flex;
+    gap: 20px;
+    padding: 16px;
+}
+
+.editor-controls {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.editor-controls input[type="text"],
+.editor-controls input[type="file"],
+.editor-controls textarea,
+.editor-controls input {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ratings {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rating-row label {
+    width: 90px;
+}
+
+.rating-value {
+    width: 28px;
+    text-align: center;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.editor-preview {
+    flex: 1;
+}
+
+.card-canvas {
+    width: 600px;
+    height: 840px;
+    border: 1px solid #ddd;
+    background: white;
+}
