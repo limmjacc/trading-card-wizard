@@ -213,6 +213,15 @@ input[type="range"] {
   grid-template-columns: 1fr auto;
 }
 
+.type-symbol-control input {
+  width: 80px;
+  text-align: center;
+  justify-self: start;
+  font-size: 1rem;
+  font-weight: 700;
+  padding-inline: 0.25rem;
+}
+
 button {
   cursor: pointer;
   border: 1px solid var(--button-edge);

@@ -766,7 +766,17 @@
     roundedRect(targetCtx, underBand.x + 0.5, underBand.y + 0.5, underBand.w - 1, underBand.h - 1, 8.5);
     targetCtx.stroke();
 
-    var stagePanel = { x: header.x + 8, y: header.y + 8, w: 148, h: 50 };
+    var stageFontSize = 19 + stageSizeAdjust;
+    var stageText = limit(drawState.stage, 14);
+    targetCtx.font = "700 " + stageFontSize + "px 'Trebuchet MS', 'Arial Black', sans-serif";
+    var stageTextWidth = targetCtx.measureText(stageText).width;
+    var stagePanelWidth = clamp(stageTextWidth + 22, 82, 138);
+    var stagePanel = {
+      x: header.x + 8 + stageOffsetX,
+      y: header.y + 8 + stageOffsetY,
+      w: stagePanelWidth,
+      h: 50
+    };
     var stageGrad = targetCtx.createLinearGradient(stagePanel.x, stagePanel.y, stagePanel.x + stagePanel.w, stagePanel.y);
     stageGrad.addColorStop(0, "#bcc4c7");
     stageGrad.addColorStop(0.55, "#edf0f1");
@@ -776,10 +786,10 @@
     targetCtx.fill();
 
     targetCtx.fillStyle = "#4b5359";
-    targetCtx.font = "700 " + (19 + stageSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.font = "700 " + stageFontSize + "px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "middle";
-    targetCtx.fillText(limit(drawState.stage, 14), stagePanel.x + 9 + stageOffsetX, stagePanel.y + 26 + stageOffsetY);
+    targetCtx.fillText(stageText, stagePanel.x + 10, stagePanel.y + 26);
 
     targetCtx.save();
     targetCtx.beginPath();
@@ -792,30 +802,54 @@
     targetCtx.fill();
     targetCtx.restore();
 
+    var symbolRadius = 18;
+    var symbolCx = header.x + header.w - 21 + hpOffsetX;
+    var symbolCy = header.y + header.h * 0.5 + 0.5 + hpOffsetY;
+    var hpRight = symbolCx - symbolRadius - 9;
+    var hpLabel = limit(drawState.hpLabel || "HP", 8);
+    var hpLabelSize = 24;
+    var hpValueSize = 46 + hpSizeAdjust;
+    targetCtx.textBaseline = "middle";
+    targetCtx.font = "700 " + hpLabelSize + "px 'Trebuchet MS', sans-serif";
+    var hpLabelWidth = targetCtx.measureText(hpLabel).width;
+    targetCtx.font = "700 " + hpValueSize + "px 'Trebuchet MS', 'Arial Black', sans-serif";
+    var hpValueWidth = targetCtx.measureText(String(drawState.hp)).width;
+    var hpGap = 7;
+    var hpTotalWidth = hpLabelWidth + hpGap + hpValueWidth;
+    var hpStart = hpRight - hpTotalWidth;
+    var hpCenterY = header.y + header.h * 0.5 + 1 + hpOffsetY;
+
+    var nameLeft = stagePanel.x + stagePanel.w + 14;
+    var nameRight = hpStart - 10;
+    var nameRegionWidth = Math.max(120, nameRight - nameLeft);
+    var nameCenterX = nameLeft + nameRegionWidth * 0.5 + nameOffsetX;
+
     targetCtx.fillStyle = "#141414";
     targetCtx.font = "700 " + (50 + nameSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
-    targetCtx.textAlign = "left";
+    targetCtx.textAlign = "center";
+    targetCtx.textBaseline = "middle";
     drawFittedTrackedText(
       targetCtx,
       limit(drawState.name, 28),
-      170 + headerOffsetX + nameOffsetX,
-      96 + headerOffsetY + nameOffsetY,
-      324,
+      nameCenterX,
+      header.y + header.h * 0.5 + 1 + nameOffsetY,
+      nameRegionWidth,
       50 + nameSizeAdjust,
       26,
       "700",
       "'Trebuchet MS', 'Arial Black', sans-serif",
       nameTracking,
-      "left"
+      "center"
     );
 
-    targetCtx.textAlign = "right";
-    targetCtx.font = "700 26px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText(limit(drawState.hpLabel || "HP", 8), 588 + headerOffsetX + hpOffsetX, 86 + headerOffsetY + hpOffsetY);
-    targetCtx.font = "700 " + (48 + hpSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
-    targetCtx.fillText(String(drawState.hp), 654 + headerOffsetX + hpOffsetX, 97 + headerOffsetY + hpOffsetY);
+    targetCtx.textAlign = "left";
+    targetCtx.textBaseline = "middle";
+    targetCtx.font = "700 " + hpLabelSize + "px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText(hpLabel, hpStart, hpCenterY - 1);
+    targetCtx.font = "700 " + hpValueSize + "px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillText(String(drawState.hp), hpStart + hpLabelWidth + hpGap, hpCenterY + 0.5);
 
-    drawTypeToken(targetCtx, 672 + headerOffsetX + hpOffsetX, 88 + headerOffsetY + hpOffsetY, limit(drawState.typeSymbol || "⚡", 2), 20);
+    drawTypeToken(targetCtx, symbolCx, symbolCy, limit(drawState.typeSymbol || "⚡", 2), symbolRadius);
   }
 
   function drawArtArea(targetCtx, drawState) {
