@@ -40,10 +40,10 @@
       offsetY: 0
     },
     visual: {
-      hueShift: 0,
-      saturation: 100,
-      texture: 38,
-      cornerRadius: 36
+      hueShift: -2,
+      saturation: 106,
+      texture: 46,
+      cornerRadius: 34
     },
     exportScale: 3
   };
@@ -385,37 +385,43 @@
 
   function drawShadow(targetCtx, radius) {
     targetCtx.save();
-    targetCtx.globalAlpha = 0.24;
+    targetCtx.globalAlpha = 0.28;
     targetCtx.fillStyle = "#24190a";
-    roundedRect(targetCtx, 28, 28, 684, 974, radius + 5);
+    roundedRect(targetCtx, 26, 26, 686, 976, radius + 6);
     targetCtx.fill();
     targetCtx.restore();
   }
 
   function drawOuterFrame(targetCtx, radius, hue, saturation) {
-    var outer = { x: 20, y: 20, w: 694, h: 984 };
+    var outer = { x: 18, y: 18, w: 698, h: 988 };
     var grad = targetCtx.createLinearGradient(outer.x, outer.y, outer.x, outer.y + outer.h);
-    grad.addColorStop(0, hsl(hue + 1, 92 * saturationScale(saturation), 77));
-    grad.addColorStop(0.45, hsl(hue, 83 * saturationScale(saturation), 65));
-    grad.addColorStop(1, hsl(hue - 1, 88 * saturationScale(saturation), 74));
+    grad.addColorStop(0, hsl(hue + 1, 90 * saturationScale(saturation), 80));
+    grad.addColorStop(0.42, hsl(hue, 83 * saturationScale(saturation), 68));
+    grad.addColorStop(0.72, hsl(hue - 1, 84 * saturationScale(saturation), 70));
+    grad.addColorStop(1, hsl(hue + 2, 88 * saturationScale(saturation), 79));
 
     targetCtx.fillStyle = grad;
     roundedRect(targetCtx, outer.x, outer.y, outer.w, outer.h, radius);
     targetCtx.fill();
 
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = hsl(hue - 2, 70 * saturationScale(saturation), 45);
+    targetCtx.lineWidth = 2.8;
+    targetCtx.strokeStyle = hsl(hue - 2, 70 * saturationScale(saturation), 46);
     roundedRect(targetCtx, outer.x + 1.5, outer.y + 1.5, outer.w - 3, outer.h - 3, radius - 1.5);
+    targetCtx.stroke();
+
+    targetCtx.lineWidth = 1.5;
+    targetCtx.strokeStyle = "rgba(255,255,255,0.48)";
+    roundedRect(targetCtx, outer.x + 6, outer.y + 6, outer.w - 12, outer.h - 12, radius - 6);
     targetCtx.stroke();
   }
 
   function drawInnerPanel(targetCtx, radius, hue, saturation, texture) {
-    var panel = { x: 44, y: 44, w: 646, h: 936 };
+    var panel = { x: 34, y: 34, w: 666, h: 956 };
     var grad = targetCtx.createLinearGradient(panel.x, panel.y, panel.x + panel.w, panel.y + panel.h);
-    grad.addColorStop(0, hsl(hue + 2, 78 * saturationScale(saturation), 70));
-    grad.addColorStop(0.32, hsl(hue, 75 * saturationScale(saturation), 63));
-    grad.addColorStop(0.76, hsl(hue - 2, 69 * saturationScale(saturation), 67));
-    grad.addColorStop(1, hsl(hue + 1, 75 * saturationScale(saturation), 74));
+    grad.addColorStop(0, hsl(hue + 1, 80 * saturationScale(saturation), 75));
+    grad.addColorStop(0.3, hsl(hue - 1, 72 * saturationScale(saturation), 66));
+    grad.addColorStop(0.7, hsl(hue - 2, 71 * saturationScale(saturation), 64));
+    grad.addColorStop(1, hsl(hue + 1, 76 * saturationScale(saturation), 73));
 
     targetCtx.fillStyle = grad;
     roundedRect(targetCtx, panel.x, panel.y, panel.w, panel.h, radius);
@@ -425,14 +431,21 @@
     roundedRect(targetCtx, panel.x + 2, panel.y + 2, panel.w - 4, panel.h - 4, radius - 2);
     targetCtx.clip();
 
-    targetCtx.globalAlpha = clamp(texture / 100 * 0.55, 0, 0.75);
+    targetCtx.globalAlpha = clamp(texture / 100 * 0.45, 0, 0.62);
     targetCtx.fillStyle = targetCtx.createPattern(getNoisePatternCanvas(), "repeat");
     targetCtx.fillRect(panel.x, panel.y, panel.w, panel.h);
 
-    var glow = targetCtx.createRadialGradient(160, 120, 10, 330, 300, 500);
-    glow.addColorStop(0, "rgba(255,255,220,0.38)");
+    var glow = targetCtx.createRadialGradient(150, 110, 20, 300, 290, 530);
+    glow.addColorStop(0, "rgba(255,255,220,0.42)");
     glow.addColorStop(1, "rgba(255,255,220,0)");
     targetCtx.fillStyle = glow;
+    targetCtx.fillRect(panel.x, panel.y, panel.w, panel.h);
+
+    var darkEdge = targetCtx.createLinearGradient(panel.x, panel.y, panel.x, panel.y + panel.h);
+    darkEdge.addColorStop(0, "rgba(120,92,34,0)");
+    darkEdge.addColorStop(0.83, "rgba(115,89,31,0.08)");
+    darkEdge.addColorStop(1, "rgba(90,67,23,0.14)");
+    targetCtx.fillStyle = darkEdge;
     targetCtx.fillRect(panel.x, panel.y, panel.w, panel.h);
 
     targetCtx.restore();
@@ -444,75 +457,95 @@
   }
 
   function drawHeader(targetCtx, drawState) {
-    var header = { x: 58, y: 68, w: 618, h: 68 };
+    var header = { x: 42, y: 56, w: 650, h: 66 };
 
     var bar = targetCtx.createLinearGradient(header.x, header.y, header.x + header.w, header.y);
-    bar.addColorStop(0, "#8f8f8f");
-    bar.addColorStop(0.2, "#f1f1f1");
-    bar.addColorStop(0.46, "#b7b7b7");
-    bar.addColorStop(0.86, "#ececec");
-    bar.addColorStop(1, "#8f8f8f");
+    bar.addColorStop(0, "#8c8f95");
+    bar.addColorStop(0.15, "#eff3f3");
+    bar.addColorStop(0.45, "#b8bdc3");
+    bar.addColorStop(0.82, "#f2f4f5");
+    bar.addColorStop(1, "#83878d");
     targetCtx.fillStyle = bar;
-    roundedRect(targetCtx, header.x, header.y, header.w, header.h, 28);
+    roundedRect(targetCtx, header.x, header.y, header.w, header.h, 25);
     targetCtx.fill();
 
-    targetCtx.lineWidth = 2.3;
-    targetCtx.strokeStyle = "rgba(56,56,56,0.85)";
-    roundedRect(targetCtx, header.x + 1, header.y + 1, header.w - 2, header.h - 2, 27);
+    targetCtx.lineWidth = 2.2;
+    targetCtx.strokeStyle = "rgba(55,55,55,0.9)";
+    roundedRect(targetCtx, header.x + 1, header.y + 1, header.w - 2, header.h - 2, 24);
     targetCtx.stroke();
 
-    var stagePanel = { x: header.x + 8, y: header.y + 9, w: 144, h: 50 };
+    var underBand = { x: 74, y: 118, w: 592, h: 18 };
+    var underGrad = targetCtx.createLinearGradient(underBand.x, underBand.y, underBand.x, underBand.y + underBand.h);
+    underGrad.addColorStop(0, "rgba(248,208,74,0.94)");
+    underGrad.addColorStop(1, "rgba(200,162,47,0.95)");
+    targetCtx.fillStyle = underGrad;
+    roundedRect(targetCtx, underBand.x, underBand.y, underBand.w, underBand.h, 9);
+    targetCtx.fill();
+    targetCtx.lineWidth = 1.2;
+    targetCtx.strokeStyle = "rgba(86,64,18,0.82)";
+    roundedRect(targetCtx, underBand.x + 0.5, underBand.y + 0.5, underBand.w - 1, underBand.h - 1, 8.5);
+    targetCtx.stroke();
+
+    var stagePanel = { x: header.x + 8, y: header.y + 8, w: 148, h: 50 };
     var stageGrad = targetCtx.createLinearGradient(stagePanel.x, stagePanel.y, stagePanel.x + stagePanel.w, stagePanel.y);
-    stageGrad.addColorStop(0, "#bfc7ca");
-    stageGrad.addColorStop(0.55, "#eff2f3");
-    stageGrad.addColorStop(1, "#acb3b6");
+    stageGrad.addColorStop(0, "#bcc4c7");
+    stageGrad.addColorStop(0.55, "#edf0f1");
+    stageGrad.addColorStop(1, "#a8afb2");
     targetCtx.fillStyle = stageGrad;
-    roundedRect(targetCtx, stagePanel.x, stagePanel.y, stagePanel.w, stagePanel.h, 15);
+    roundedRect(targetCtx, stagePanel.x, stagePanel.y, stagePanel.w, stagePanel.h, 14);
     targetCtx.fill();
 
-    targetCtx.fillStyle = "#4f585e";
-    targetCtx.font = "700 21px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillStyle = "#4b5359";
+    targetCtx.font = "700 19px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "middle";
-    targetCtx.fillText(limit(drawState.stage, 14), stagePanel.x + 8, stagePanel.y + 25);
+    targetCtx.fillText(limit(drawState.stage, 14), stagePanel.x + 9, stagePanel.y + 26);
 
     targetCtx.save();
     targetCtx.beginPath();
-    targetCtx.moveTo(404, 72);
-    targetCtx.quadraticCurveTo(500, 100, 530, 72);
-    targetCtx.lineTo(550, 72);
-    targetCtx.quadraticCurveTo(502, 136, 387, 136);
+    targetCtx.moveTo(390, 58);
+    targetCtx.quadraticCurveTo(507, 87, 549, 57);
+    targetCtx.lineTo(577, 57);
+    targetCtx.quadraticCurveTo(515, 122, 371, 123);
     targetCtx.closePath();
-    targetCtx.fillStyle = "rgba(255,255,255,0.66)";
+    targetCtx.fillStyle = "rgba(255,255,255,0.55)";
     targetCtx.fill();
     targetCtx.restore();
 
-    targetCtx.fillStyle = "#111";
-    targetCtx.font = "700 53px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillStyle = "#141414";
+    targetCtx.font = "700 50px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "left";
-    targetCtx.fillText(limit(drawState.name, 28), 176, 102);
+    drawFittedText(targetCtx, limit(drawState.name, 28), 170, 96, 324, 50, 30, "700", "'Trebuchet MS', 'Arial Black', sans-serif");
 
-    targetCtx.font = "700 45px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "right";
-    targetCtx.fillText("HP " + String(drawState.hp), 618, 100);
+    targetCtx.font = "700 26px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText("HP", 588, 86);
+    targetCtx.font = "700 48px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillText(String(drawState.hp), 654, 97);
 
-    drawTypeToken(targetCtx, 646, 101, limit(drawState.typeSymbol || "⚡", 2), 24);
+    drawTypeToken(targetCtx, 672, 88, limit(drawState.typeSymbol || "⚡", 2), 20);
   }
 
   function drawArtArea(targetCtx, drawState) {
-    var frame = { x: 72, y: 142, w: 590, h: 396 };
+    var frame = { x: 64, y: 138, w: 606, h: 412 };
     var border = targetCtx.createLinearGradient(frame.x, frame.y, frame.x, frame.y + frame.h);
-    border.addColorStop(0, "#6f6f6f");
-    border.addColorStop(0.5, "#e3e3e3");
-    border.addColorStop(1, "#707070");
+    border.addColorStop(0, "#72757a");
+    border.addColorStop(0.42, "#f3f4f4");
+    border.addColorStop(0.58, "#b8bbbf");
+    border.addColorStop(1, "#666a70");
 
     targetCtx.fillStyle = border;
-    roundedRect(targetCtx, frame.x, frame.y, frame.w, frame.h, 9);
+    roundedRect(targetCtx, frame.x, frame.y, frame.w, frame.h, 10);
     targetCtx.fill();
 
-    var inner = { x: frame.x + 11, y: frame.y + 11, w: frame.w - 22, h: frame.h - 22 };
+    targetCtx.lineWidth = 2;
+    targetCtx.strokeStyle = "rgba(58,58,58,0.85)";
+    roundedRect(targetCtx, frame.x + 1, frame.y + 1, frame.w - 2, frame.h - 2, 9);
+    targetCtx.stroke();
+
+    var inner = { x: frame.x + 12, y: frame.y + 12, w: frame.w - 24, h: frame.h - 24 };
     targetCtx.save();
-    roundedRect(targetCtx, inner.x, inner.y, inner.w, inner.h, 5);
+    roundedRect(targetCtx, inner.x, inner.y, inner.w, inner.h, 4);
     targetCtx.clip();
 
     var artImage = customArtImage || defaultArtImage;
@@ -537,30 +570,42 @@
     }
 
     var haze = targetCtx.createLinearGradient(inner.x, inner.y, inner.x + inner.w, inner.y + inner.h);
-    haze.addColorStop(0, "rgba(255,255,255,0.22)");
+    haze.addColorStop(0, "rgba(255,255,255,0.2)");
     haze.addColorStop(0.3, "rgba(255,255,255,0)");
     haze.addColorStop(1, "rgba(0,0,0,0.09)");
     targetCtx.fillStyle = haze;
     targetCtx.fillRect(inner.x, inner.y, inner.w, inner.h);
     targetCtx.restore();
+
+    targetCtx.lineWidth = 1;
+    targetCtx.strokeStyle = "rgba(255,255,255,0.55)";
+    roundedRect(targetCtx, inner.x + 0.5, inner.y + 0.5, inner.w - 1, inner.h - 1, 3.5);
+    targetCtx.stroke();
   }
 
   function drawInfoStrip(targetCtx, drawState) {
-    var strip = { x: 82, y: 538, w: 570, h: 22 };
+    var strip = { x: 74, y: 553, w: 586, h: 22 };
     var grad = targetCtx.createLinearGradient(strip.x, strip.y, strip.x + strip.w, strip.y);
-    grad.addColorStop(0, "#7f7f7f");
-    grad.addColorStop(0.17, "#f0f0f0");
-    grad.addColorStop(0.84, "#f0f0f0");
-    grad.addColorStop(1, "#7f7f7f");
+    grad.addColorStop(0, "#777b80");
+    grad.addColorStop(0.16, "#efefef");
+    grad.addColorStop(0.84, "#efefef");
+    grad.addColorStop(1, "#777b80");
 
+    targetCtx.save();
+    targetCtx.beginPath();
+    targetCtx.moveTo(strip.x + 10, strip.y);
+    targetCtx.lineTo(strip.x + strip.w - 20, strip.y);
+    targetCtx.lineTo(strip.x + strip.w, strip.y + strip.h * 0.55);
+    targetCtx.lineTo(strip.x + strip.w - 10, strip.y + strip.h);
+    targetCtx.lineTo(strip.x + 10, strip.y + strip.h);
+    targetCtx.lineTo(strip.x, strip.y + strip.h * 0.5);
+    targetCtx.closePath();
     targetCtx.fillStyle = grad;
-    roundedRect(targetCtx, strip.x, strip.y, strip.w, strip.h, 8);
     targetCtx.fill();
-
     targetCtx.lineWidth = 1;
-    targetCtx.strokeStyle = "rgba(70,70,70,0.85)";
-    roundedRect(targetCtx, strip.x + 0.5, strip.y + 0.5, strip.w - 1, strip.h - 1, 7);
+    targetCtx.strokeStyle = "rgba(65,65,65,0.85)";
     targetCtx.stroke();
+    targetCtx.restore();
 
     var info = [
       limit(drawState.cardNumber, 24),
@@ -570,17 +615,17 @@
     ].join("  ");
 
     targetCtx.fillStyle = "#242424";
-    targetCtx.font = "400 11px 'Trebuchet MS', sans-serif";
+    targetCtx.font = "400 10px 'Trebuchet MS', sans-serif";
     targetCtx.textAlign = "center";
     targetCtx.textBaseline = "middle";
-    targetCtx.fillText(info, strip.x + strip.w / 2, strip.y + strip.h / 2 + 0.5);
+    targetCtx.fillText(info, strip.x + strip.w / 2, strip.y + strip.h / 2 + 0.3);
   }
 
   function drawAttacks(targetCtx, drawState) {
     drawAttackRow(
       targetCtx,
       {
-        y: 602,
+        y: 620,
         cost: drawState.move1.cost,
         name: drawState.move1.name,
         text: drawState.move1.text,
@@ -590,7 +635,7 @@
     drawAttackRow(
       targetCtx,
       {
-        y: 710,
+        y: 724,
         cost: drawState.move2.cost,
         name: drawState.move2.name,
         text: drawState.move2.text,
@@ -602,50 +647,64 @@
   function drawAttackRow(targetCtx, attack) {
     var y = attack.y;
     var tokens = tokenizeCost(attack.cost);
-    var tokenX = 96;
+    var tokenX = 86;
 
     for (var i = 0; i < tokens.length; i += 1) {
-      drawEnergyToken(targetCtx, tokenX + i * 34, y + 10, tokens[i], 14);
+      drawEnergyToken(targetCtx, tokenX + i * 34, y + 9, tokens[i], 14);
     }
 
     targetCtx.fillStyle = "#1b1407";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "middle";
-    targetCtx.font = "700 26px 'Trebuchet MS', 'Arial Black', sans-serif";
-    targetCtx.fillText(limit(attack.name, 24), 206, y + 18);
+    targetCtx.font = "700 23px 'Trebuchet MS', 'Arial Black', sans-serif";
+    drawFittedText(
+      targetCtx,
+      limit(attack.name, 24),
+      200,
+      y + 14,
+      attack.damage ? 360 : 430,
+      23,
+      15,
+      "700",
+      "'Trebuchet MS', 'Arial Black', sans-serif"
+    );
 
     if (attack.damage) {
       targetCtx.textAlign = "right";
-      targetCtx.fillText(attack.damage, 644, y + 18);
+      targetCtx.fillText(attack.damage, 650, y + 14);
     }
 
     targetCtx.textAlign = "left";
     targetCtx.font = "400 14px 'Trebuchet MS', sans-serif";
-    wrapText(targetCtx, attack.text, 76, y + 43, 566, 18, 2);
+    wrapText(targetCtx, attack.text, 76, y + 40, 572, 16.5, 2);
   }
 
   function drawFooter(targetCtx, drawState) {
-    targetCtx.lineWidth = 2;
-    targetCtx.strokeStyle = "rgba(125,102,36,0.8)";
+    targetCtx.lineWidth = 2.1;
+    targetCtx.strokeStyle = "rgba(125,102,36,0.72)";
 
     targetCtx.beginPath();
-    targetCtx.moveTo(76, 848);
-    targetCtx.lineTo(355, 848);
-    targetCtx.moveTo(76, 904);
-    targetCtx.lineTo(355, 904);
+    targetCtx.moveTo(76, 850);
+    targetCtx.lineTo(364, 850);
+    targetCtx.moveTo(76, 906);
+    targetCtx.lineTo(364, 906);
     targetCtx.stroke();
 
     targetCtx.fillStyle = "#3a2d12";
     targetCtx.textAlign = "left";
-    targetCtx.font = "700 14px 'Trebuchet MS', sans-serif";
+    targetCtx.font = "700 13px 'Trebuchet MS', sans-serif";
     targetCtx.fillText("weakness", 76, 834);
-    targetCtx.fillText("resistance", 196, 834);
+    targetCtx.fillText("resistance", 194, 834);
     targetCtx.fillText("retreat", 76, 891);
 
-    targetCtx.font = "700 18px 'Trebuchet MS', sans-serif";
+    targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
     targetCtx.fillText(limit(drawState.weakness, 18), 76, 872);
-    targetCtx.fillText(limit(drawState.resistance, 18), 196, 872);
-    targetCtx.fillText(limit(drawState.retreat, 18), 160, 929);
+    targetCtx.fillText(limit(drawState.resistance, 18), 194, 872);
+
+    var retreatTokens = tokenizeCost(drawState.retreat).slice(0, 3);
+    for (var i = 0; i < retreatTokens.length; i += 1) {
+      drawEnergyToken(targetCtx, 126 + i * 26, 927, retreatTokens[i], 10);
+    }
 
     drawFlavorRibbon(targetCtx, drawState.flavorText);
 
@@ -655,8 +714,8 @@
     targetCtx.fillText("©" + limit(drawState.year, 6) + " Trading Card Wizard", 74, 960);
 
     targetCtx.textAlign = "center";
-    targetCtx.font = "italic 14px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText("Illus. " + limit(drawState.illustrator, 32), 486, 958);
+    targetCtx.font = "italic 13px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText("Illus. " + limit(drawState.illustrator, 32), 493, 958);
 
     targetCtx.textAlign = "right";
     targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
@@ -670,38 +729,38 @@
   }
 
   function drawFlavorRibbon(targetCtx, text) {
-    var x = 362;
-    var y = 848;
-    var w = 292;
+    var x = 366;
+    var y = 850;
+    var w = 286;
     var h = 94;
 
     targetCtx.save();
     targetCtx.beginPath();
-    targetCtx.moveTo(x + 14, y);
-    targetCtx.lineTo(x + w - 20, y);
-    targetCtx.lineTo(x + w, y + 16);
-    targetCtx.lineTo(x + w - 18, y + h);
+    targetCtx.moveTo(x + 16, y);
+    targetCtx.lineTo(x + w - 22, y);
+    targetCtx.lineTo(x + w, y + 14);
+    targetCtx.lineTo(x + w - 16, y + h);
     targetCtx.lineTo(x, y + h);
-    targetCtx.lineTo(x + 16, y + 18);
+    targetCtx.lineTo(x + 14, y + 16);
     targetCtx.closePath();
 
     var grad = targetCtx.createLinearGradient(x, y, x + w, y + h);
-    grad.addColorStop(0, "rgba(254,228,120,0.92)");
-    grad.addColorStop(0.55, "rgba(255,239,160,0.82)");
-    grad.addColorStop(1, "rgba(235,208,105,0.9)");
+    grad.addColorStop(0, "rgba(250,229,130,0.92)");
+    grad.addColorStop(0.55, "rgba(255,236,154,0.82)");
+    grad.addColorStop(1, "rgba(229,201,97,0.9)");
     targetCtx.fillStyle = grad;
     targetCtx.fill();
 
-    targetCtx.lineWidth = 2;
-    targetCtx.strokeStyle = "rgba(128,99,36,0.88)";
+    targetCtx.lineWidth = 1.8;
+    targetCtx.strokeStyle = "rgba(128,99,36,0.8)";
     targetCtx.stroke();
     targetCtx.restore();
 
     targetCtx.fillStyle = "#3a280b";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "top";
-    targetCtx.font = "italic 14px 'Trebuchet MS', serif";
-    wrapText(targetCtx, text, x + 18, y + 22, w - 46, 15, 3);
+    targetCtx.font = "italic 15px 'Trebuchet MS', serif";
+    wrapText(targetCtx, text, x + 15, y + 16, w - 32, 15, 3);
   }
 
   function drawTypeToken(targetCtx, x, y, symbol, radius) {
@@ -709,6 +768,7 @@
   }
 
   function drawEnergyToken(targetCtx, x, y, token, radius) {
+    var palette = getEnergyTokenPalette(token);
     var grad = targetCtx.createRadialGradient(
       x - radius * 0.2,
       y - radius * 0.35,
@@ -717,9 +777,9 @@
       y,
       radius
     );
-    grad.addColorStop(0, "#fff1a0");
-    grad.addColorStop(0.55, "#f0c92a");
-    grad.addColorStop(1, "#8d6e20");
+    grad.addColorStop(0, palette.inner);
+    grad.addColorStop(0.55, palette.mid);
+    grad.addColorStop(1, palette.outer);
 
     targetCtx.fillStyle = grad;
     targetCtx.beginPath();
@@ -727,14 +787,70 @@
     targetCtx.fill();
 
     targetCtx.lineWidth = 1.5;
-    targetCtx.strokeStyle = "rgba(37,28,8,0.85)";
+    targetCtx.strokeStyle = palette.stroke;
     targetCtx.stroke();
 
-    targetCtx.fillStyle = "#24180a";
+    targetCtx.fillStyle = palette.text;
     targetCtx.textAlign = "center";
     targetCtx.textBaseline = "middle";
-    targetCtx.font = "700 " + Math.round(radius * 1.08) + "px 'Trebuchet MS', sans-serif";
+    targetCtx.font = "700 " + Math.round(radius * 1.02) + "px 'Trebuchet MS', sans-serif";
     targetCtx.fillText(limit(token, 2), x, y + 1);
+  }
+
+  function getEnergyTokenPalette(token) {
+    var value = String(token || "").trim();
+    if (value === "✶" || value === "*" || value === "○") {
+      return {
+        inner: "#fefefe",
+        mid: "#d8d8d8",
+        outer: "#8f8f8f",
+        stroke: "rgba(40,40,40,0.82)",
+        text: "#1d1d1d"
+      };
+    }
+    if (value === "🔥") {
+      return {
+        inner: "#ffd5b8",
+        mid: "#f48c2a",
+        outer: "#8f2f0c",
+        stroke: "rgba(70,24,9,0.85)",
+        text: "#2c1209"
+      };
+    }
+    if (value === "💧") {
+      return {
+        inner: "#daefff",
+        mid: "#58a3f4",
+        outer: "#1f4b8e",
+        stroke: "rgba(17,41,77,0.86)",
+        text: "#0d274f"
+      };
+    }
+    if (value === "🍃" || value === "🌿") {
+      return {
+        inner: "#e4ffd3",
+        mid: "#84c95d",
+        outer: "#2f6e29",
+        stroke: "rgba(24,54,20,0.86)",
+        text: "#173d1a"
+      };
+    }
+    if (value === "🧠" || value === "👁") {
+      return {
+        inner: "#ffe2ff",
+        mid: "#cb7de9",
+        outer: "#6f3592",
+        stroke: "rgba(52,24,72,0.84)",
+        text: "#2a1240"
+      };
+    }
+    return {
+      inner: "#fff5b5",
+      mid: "#efc528",
+      outer: "#8d6e20",
+      stroke: "rgba(37,28,8,0.85)",
+      text: "#24180a"
+    };
   }
 
   function drawCoverImage(targetCtx, image, x, y, w, h, zoom, offsetX, offsetY) {
@@ -750,10 +866,10 @@
   }
 
   function drawReferenceCrop(targetCtx, image, x, y, w, h, zoom, offsetX, offsetY) {
-    var srcX = 86;
-    var srcY = 126;
-    var srcW = 558;
-    var srcH = 384;
+    var srcX = 78;
+    var srcY = 128;
+    var srcW = 578;
+    var srcH = 392;
     var zoomFactor = zoom / 100;
     var cropW = srcW / zoomFactor;
     var cropH = srcH / zoomFactor;
@@ -830,6 +946,22 @@
     window.setTimeout(function () {
       URL.revokeObjectURL(url);
     }, 200);
+  }
+
+  function drawFittedText(targetCtx, text, x, y, maxWidth, maxSize, minSize, weight, family) {
+    var clean = String(text || "");
+    var size = maxSize;
+    var best = minSize;
+    while (size >= minSize) {
+      targetCtx.font = weight + " " + size + "px " + family;
+      if (targetCtx.measureText(clean).width <= maxWidth) {
+        best = size;
+        break;
+      }
+      size -= 1;
+    }
+    targetCtx.font = weight + " " + best + "px " + family;
+    targetCtx.fillText(clean, x, y);
   }
 
   function wrapText(targetCtx, text, x, y, maxWidth, lineHeight, maxLines) {
