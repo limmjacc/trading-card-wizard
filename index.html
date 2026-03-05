@@ -368,21 +368,23 @@
 
         <section class="panel preview">
           <h2>Live Preview</h2>
-          <div class="preview-frame">
-            <canvas
-              id="cardCanvas"
-              width="734"
-              height="1024"
-              role="img"
-              aria-label="Trading card preview"
-            ></canvas>
+          <div class="preview-main">
+            <div class="preview-frame">
+              <canvas
+                id="cardCanvas"
+                width="734"
+                height="1024"
+                role="img"
+                aria-label="Trading card preview"
+              ></canvas>
+            </div>
+            <p id="statusMessage" class="status" aria-live="polite"></p>
           </div>
           <div class="preview-actions">
             <button id="exportPng" type="button">Export PNG</button>
             <button id="exportJpg" type="button">Export JPEG</button>
             <button id="resetCard" type="button">Reset to Default</button>
           </div>
-          <p id="statusMessage" class="status" aria-live="polite"></p>
         </section>
       </main>
     </div>
