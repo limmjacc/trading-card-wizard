@@ -5,6 +5,163 @@
   var CARD_HEIGHT = 1024;
   var STORAGE_KEY = "tcw-state-v1";
   var STATUS_MS = 3800;
+  var DEFAULT_THEME_ID = "electric";
+
+  var THEME_PRESETS = {
+    electric: {
+      hueShift: 0,
+      saturation: 100,
+      css: {
+        "--bg-1": "#f4e5b4",
+        "--bg-2": "#d9c27f",
+        "--bg-radial-1": "#fff3c8",
+        "--bg-radial-2": "#f2d784",
+        "--topbar-border": "#8f7532",
+        "--topbar-1": "rgba(255, 251, 226, 0.92)",
+        "--topbar-2": "rgba(244, 220, 140, 0.85)",
+        "--topbar-stripe": "rgba(190, 156, 66, 0.08)",
+        "--panel": "#fff8e2",
+        "--panel-edge": "#baa15f",
+        "--panel-1": "rgba(255, 250, 230, 0.95)",
+        "--panel-2": "rgba(245, 225, 156, 0.85)",
+        "--panel-stripe": "rgba(175, 143, 69, 0.08)",
+        "--ink": "#2a2111",
+        "--accent": "#8f7327",
+        "--button": "#f6d85e",
+        "--button-edge": "#8d742a",
+        "--button-highlight": "#fff2a8",
+        "--focus-ring": "rgba(168, 137, 58, 0.18)",
+        "--shadow-color": "rgba(71, 53, 16, 0.2)"
+      }
+    },
+    ember: {
+      hueShift: -28,
+      saturation: 132,
+      css: {
+        "--bg-1": "#f2d0a5",
+        "--bg-2": "#b66149",
+        "--bg-radial-1": "#ffe3be",
+        "--bg-radial-2": "#ef9d72",
+        "--topbar-border": "#8f4a33",
+        "--topbar-1": "rgba(255, 234, 219, 0.92)",
+        "--topbar-2": "rgba(229, 141, 102, 0.85)",
+        "--topbar-stripe": "rgba(179, 86, 52, 0.09)",
+        "--panel": "#fff0e6",
+        "--panel-edge": "#b56a4d",
+        "--panel-1": "rgba(255, 241, 229, 0.95)",
+        "--panel-2": "rgba(236, 170, 137, 0.86)",
+        "--panel-stripe": "rgba(176, 92, 56, 0.09)",
+        "--ink": "#2f1712",
+        "--accent": "#8f3a28",
+        "--button": "#ef9d5d",
+        "--button-edge": "#9d4f2f",
+        "--button-highlight": "#ffd0a4",
+        "--focus-ring": "rgba(190, 94, 57, 0.22)",
+        "--shadow-color": "rgba(77, 32, 19, 0.25)"
+      }
+    },
+    tidal: {
+      hueShift: 22,
+      saturation: 120,
+      css: {
+        "--bg-1": "#c7dfef",
+        "--bg-2": "#7397be",
+        "--bg-radial-1": "#e5f4ff",
+        "--bg-radial-2": "#9dc7e9",
+        "--topbar-border": "#4f6c8f",
+        "--topbar-1": "rgba(232, 244, 255, 0.92)",
+        "--topbar-2": "rgba(161, 194, 232, 0.86)",
+        "--topbar-stripe": "rgba(77, 121, 173, 0.09)",
+        "--panel": "#edf6ff",
+        "--panel-edge": "#6d90b5",
+        "--panel-1": "rgba(239, 247, 255, 0.95)",
+        "--panel-2": "rgba(173, 201, 233, 0.86)",
+        "--panel-stripe": "rgba(75, 113, 163, 0.09)",
+        "--ink": "#132436",
+        "--accent": "#2f567d",
+        "--button": "#8cb5df",
+        "--button-edge": "#456b95",
+        "--button-highlight": "#cbe3ff",
+        "--focus-ring": "rgba(68, 111, 165, 0.22)",
+        "--shadow-color": "rgba(30, 53, 81, 0.24)"
+      }
+    },
+    grove: {
+      hueShift: 12,
+      saturation: 118,
+      css: {
+        "--bg-1": "#d6e7c1",
+        "--bg-2": "#7ba06d",
+        "--bg-radial-1": "#ecf8d7",
+        "--bg-radial-2": "#a6ce86",
+        "--topbar-border": "#4f7345",
+        "--topbar-1": "rgba(237, 247, 220, 0.92)",
+        "--topbar-2": "rgba(169, 207, 141, 0.86)",
+        "--topbar-stripe": "rgba(82, 122, 59, 0.09)",
+        "--panel": "#f1f8e8",
+        "--panel-edge": "#719360",
+        "--panel-1": "rgba(242, 250, 234, 0.95)",
+        "--panel-2": "rgba(183, 218, 154, 0.86)",
+        "--panel-stripe": "rgba(84, 126, 61, 0.09)",
+        "--ink": "#182915",
+        "--accent": "#385f2f",
+        "--button": "#9ccf7f",
+        "--button-edge": "#4e7a3f",
+        "--button-highlight": "#d5f2bf",
+        "--focus-ring": "rgba(80, 124, 61, 0.22)",
+        "--shadow-color": "rgba(38, 64, 29, 0.24)"
+      }
+    },
+    violet: {
+      hueShift: 30,
+      saturation: 128,
+      css: {
+        "--bg-1": "#ddcfee",
+        "--bg-2": "#8e78ba",
+        "--bg-radial-1": "#f3e9ff",
+        "--bg-radial-2": "#b7a1dc",
+        "--topbar-border": "#654f8f",
+        "--topbar-1": "rgba(242, 234, 255, 0.92)",
+        "--topbar-2": "rgba(185, 164, 227, 0.86)",
+        "--topbar-stripe": "rgba(106, 82, 157, 0.09)",
+        "--panel": "#f4edff",
+        "--panel-edge": "#866eb1",
+        "--panel-1": "rgba(246, 239, 255, 0.95)",
+        "--panel-2": "rgba(196, 176, 235, 0.86)",
+        "--panel-stripe": "rgba(107, 83, 155, 0.09)",
+        "--ink": "#1f1733",
+        "--accent": "#5e468f",
+        "--button": "#b39de2",
+        "--button-edge": "#70569e",
+        "--button-highlight": "#dccfff",
+        "--focus-ring": "rgba(111, 84, 162, 0.22)",
+        "--shadow-color": "rgba(56, 41, 88, 0.24)"
+      }
+    }
+  };
+
+  var DEFAULT_PRECISION = {
+    headerOffsetX: 0,
+    headerOffsetY: 0,
+    nameOffsetX: 0,
+    nameOffsetY: 0,
+    nameSizeAdjust: 0,
+    nameTracking: 0,
+    hpOffsetX: 0,
+    hpOffsetY: 0,
+    hpSizeAdjust: 0,
+    stageOffsetX: 0,
+    stageOffsetY: 0,
+    stageSizeAdjust: 0,
+    artFrameOffsetY: 0,
+    infoStripOffsetY: 0,
+    attackOffsetY: 0,
+    moveNameSizeAdjust: 0,
+    moveTextSizeAdjust: 0,
+    moveTextLeadingAdjust: 0,
+    footerOffsetY: 0,
+    flavorSizeAdjust: 0
+  };
 
   var DEFAULT_STATE = {
     stage: "BASIC",
@@ -33,6 +190,14 @@
     illustrator: "Kouki Saitou",
     collectorNumber: "115/114",
     year: "2026",
+    hpLabel: "HP",
+    infoLine: "",
+    weaknessLabel: "weakness",
+    resistanceLabel: "resistance",
+    retreatLabel: "retreat",
+    illustratorLabel: "Illus.",
+    copyrightText: "©2011 Pokemon",
+    setSymbol: "◧",
     artDataUrl: "",
     art: {
       zoom: 100,
@@ -40,11 +205,13 @@
       offsetY: 0
     },
     visual: {
-      hueShift: -2,
-      saturation: 106,
+      theme: DEFAULT_THEME_ID,
+      hueShift: 0,
+      saturation: 100,
       texture: 46,
       cornerRadius: 34
     },
+    precision: Object.assign({}, DEFAULT_PRECISION),
     exportScale: 3
   };
 
@@ -80,7 +247,15 @@
     flavorText: "flavorText",
     illustrator: "illustrator",
     collectorNumber: "collectorNumber",
-    yearText: "year"
+    yearText: "year",
+    hpLabel: "hpLabel",
+    infoLine: "infoLine",
+    weaknessLabel: "weaknessLabel",
+    resistanceLabel: "resistanceLabel",
+    retreatLabel: "retreatLabel",
+    illustratorLabel: "illustratorLabel",
+    copyrightText: "copyrightText",
+    setSymbol: "setSymbol"
   };
 
   var rangeMap = {
@@ -90,7 +265,27 @@
     hueShift: "visual.hueShift",
     saturation: "visual.saturation",
     texture: "visual.texture",
-    cornerRadius: "visual.cornerRadius"
+    cornerRadius: "visual.cornerRadius",
+    headerOffsetX: "precision.headerOffsetX",
+    headerOffsetY: "precision.headerOffsetY",
+    nameOffsetX: "precision.nameOffsetX",
+    nameOffsetY: "precision.nameOffsetY",
+    nameSizeAdjust: "precision.nameSizeAdjust",
+    nameTracking: "precision.nameTracking",
+    hpOffsetX: "precision.hpOffsetX",
+    hpOffsetY: "precision.hpOffsetY",
+    hpSizeAdjust: "precision.hpSizeAdjust",
+    stageOffsetX: "precision.stageOffsetX",
+    stageOffsetY: "precision.stageOffsetY",
+    stageSizeAdjust: "precision.stageSizeAdjust",
+    artFrameOffsetY: "precision.artFrameOffsetY",
+    infoStripOffsetY: "precision.infoStripOffsetY",
+    attackOffsetY: "precision.attackOffsetY",
+    moveNameSizeAdjust: "precision.moveNameSizeAdjust",
+    moveTextSizeAdjust: "precision.moveTextSizeAdjust",
+    moveTextLeadingAdjust: "precision.moveTextLeadingAdjust",
+    footerOffsetY: "precision.footerOffsetY",
+    flavorSizeAdjust: "precision.flavorSizeAdjust"
   };
 
   init();
@@ -124,6 +319,16 @@
       state.exportScale = clampInt(exportScale.value, 2, 5, 3);
       scheduleAutosave();
     });
+
+    var cardTheme = document.getElementById("cardTheme");
+    if (cardTheme) {
+      cardTheme.addEventListener("change", function () {
+        applySelectedTheme(cardTheme.value);
+        updateThemeDrivenControlValues();
+        scheduleAutosave();
+        queueRender();
+      });
+    }
   }
 
   function bindRangeInputs() {
@@ -286,6 +491,9 @@
   }
 
   function hydrateControls() {
+    state.visual.theme = sanitizeThemeId(state.visual.theme);
+    applyConfiguratorTheme(state.visual.theme);
+
     Object.keys(inputMap).forEach(function (id) {
       var path = inputMap[id];
       var el = document.getElementById(id);
@@ -306,6 +514,11 @@
       el.value = String(getPath(state, rangeMap[id]));
     });
 
+    var cardTheme = document.getElementById("cardTheme");
+    if (cardTheme) {
+      cardTheme.value = state.visual.theme;
+    }
+
     var exportScale = document.getElementById("exportScale");
     exportScale.value = String(state.exportScale);
   }
@@ -317,17 +530,67 @@
     numEl.value = String(value);
   }
 
+  function sanitizeThemeId(themeId) {
+    var candidate = String(themeId || "").trim().toLowerCase();
+    if (candidate in THEME_PRESETS) {
+      return candidate;
+    }
+    return DEFAULT_THEME_ID;
+  }
+
+  function applySelectedTheme(themeId) {
+    var cleanTheme = sanitizeThemeId(themeId);
+    var preset = THEME_PRESETS[cleanTheme];
+    state.visual.theme = cleanTheme;
+    state.visual.hueShift = preset.hueShift;
+    state.visual.saturation = preset.saturation;
+    applyConfiguratorTheme(cleanTheme);
+  }
+
+  function applyConfiguratorTheme(themeId) {
+    var cleanTheme = sanitizeThemeId(themeId);
+    var preset = THEME_PRESETS[cleanTheme];
+    var root = document.documentElement;
+    Object.keys(preset.css).forEach(function (varName) {
+      root.style.setProperty(varName, preset.css[varName]);
+    });
+  }
+
+  function updateThemeDrivenControlValues() {
+    var hueShift = document.getElementById("hueShift");
+    var saturation = document.getElementById("saturation");
+    if (hueShift) {
+      hueShift.value = String(state.visual.hueShift);
+    }
+    if (saturation) {
+      saturation.value = String(state.visual.saturation);
+    }
+  }
+
   function loadDefaultArt() {
+    var candidates = ["./images/example-card.jpeg", "./example-card.jpeg"];
     var image = new Image();
+    var idx = 0;
+
+    function tryNext() {
+      if (idx >= candidates.length) {
+        defaultArtImage = null;
+        queueRender();
+        return;
+      }
+      image.src = candidates[idx];
+      idx += 1;
+    }
+
     image.onload = function () {
       defaultArtImage = image;
       queueRender();
     };
     image.onerror = function () {
-      defaultArtImage = null;
-      queueRender();
+      tryNext();
     };
-    image.src = "./example-card.jpeg";
+
+    tryNext();
   }
 
   function loadCustomArt(dataUrl) {
@@ -381,6 +644,11 @@
     drawFooter(targetCtx, drawState);
 
     targetCtx.restore();
+  }
+
+  function getPrecisionValue(drawState, key, min, max) {
+    var raw = getPath(drawState, "precision." + key);
+    return clampInt(raw, min, max, 0);
   }
 
   function drawShadow(targetCtx, radius) {
@@ -457,7 +725,19 @@
   }
 
   function drawHeader(targetCtx, drawState) {
-    var header = { x: 42, y: 56, w: 650, h: 66 };
+    var headerOffsetX = getPrecisionValue(drawState, "headerOffsetX", -20, 20);
+    var headerOffsetY = getPrecisionValue(drawState, "headerOffsetY", -20, 20);
+    var nameOffsetX = getPrecisionValue(drawState, "nameOffsetX", -40, 40);
+    var nameOffsetY = getPrecisionValue(drawState, "nameOffsetY", -24, 24);
+    var nameSizeAdjust = getPrecisionValue(drawState, "nameSizeAdjust", -12, 12);
+    var nameTracking = getPrecisionValue(drawState, "nameTracking", -4, 6);
+    var hpOffsetX = getPrecisionValue(drawState, "hpOffsetX", -24, 24);
+    var hpOffsetY = getPrecisionValue(drawState, "hpOffsetY", -24, 24);
+    var hpSizeAdjust = getPrecisionValue(drawState, "hpSizeAdjust", -12, 12);
+    var stageOffsetX = getPrecisionValue(drawState, "stageOffsetX", -20, 20);
+    var stageOffsetY = getPrecisionValue(drawState, "stageOffsetY", -20, 20);
+    var stageSizeAdjust = getPrecisionValue(drawState, "stageSizeAdjust", -10, 10);
+    var header = { x: 42 + headerOffsetX, y: 56 + headerOffsetY, w: 650, h: 66 };
 
     var bar = targetCtx.createLinearGradient(header.x, header.y, header.x + header.w, header.y);
     bar.addColorStop(0, "#8c8f95");
@@ -474,7 +754,7 @@
     roundedRect(targetCtx, header.x + 1, header.y + 1, header.w - 2, header.h - 2, 24);
     targetCtx.stroke();
 
-    var underBand = { x: 74, y: 118, w: 592, h: 18 };
+    var underBand = { x: 74 + headerOffsetX, y: 118 + headerOffsetY, w: 592, h: 18 };
     var underGrad = targetCtx.createLinearGradient(underBand.x, underBand.y, underBand.x, underBand.y + underBand.h);
     underGrad.addColorStop(0, "rgba(248,208,74,0.94)");
     underGrad.addColorStop(1, "rgba(200,162,47,0.95)");
@@ -496,38 +776,51 @@
     targetCtx.fill();
 
     targetCtx.fillStyle = "#4b5359";
-    targetCtx.font = "700 19px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.font = "700 " + (19 + stageSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "middle";
-    targetCtx.fillText(limit(drawState.stage, 14), stagePanel.x + 9, stagePanel.y + 26);
+    targetCtx.fillText(limit(drawState.stage, 14), stagePanel.x + 9 + stageOffsetX, stagePanel.y + 26 + stageOffsetY);
 
     targetCtx.save();
     targetCtx.beginPath();
-    targetCtx.moveTo(390, 58);
-    targetCtx.quadraticCurveTo(507, 87, 549, 57);
-    targetCtx.lineTo(577, 57);
-    targetCtx.quadraticCurveTo(515, 122, 371, 123);
+    targetCtx.moveTo(390 + headerOffsetX, 58 + headerOffsetY);
+    targetCtx.quadraticCurveTo(507 + headerOffsetX, 87 + headerOffsetY, 549 + headerOffsetX, 57 + headerOffsetY);
+    targetCtx.lineTo(577 + headerOffsetX, 57 + headerOffsetY);
+    targetCtx.quadraticCurveTo(515 + headerOffsetX, 122 + headerOffsetY, 371 + headerOffsetX, 123 + headerOffsetY);
     targetCtx.closePath();
     targetCtx.fillStyle = "rgba(255,255,255,0.55)";
     targetCtx.fill();
     targetCtx.restore();
 
     targetCtx.fillStyle = "#141414";
-    targetCtx.font = "700 50px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.font = "700 " + (50 + nameSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
     targetCtx.textAlign = "left";
-    drawFittedText(targetCtx, limit(drawState.name, 28), 170, 96, 324, 50, 30, "700", "'Trebuchet MS', 'Arial Black', sans-serif");
+    drawFittedTrackedText(
+      targetCtx,
+      limit(drawState.name, 28),
+      170 + headerOffsetX + nameOffsetX,
+      96 + headerOffsetY + nameOffsetY,
+      324,
+      50 + nameSizeAdjust,
+      26,
+      "700",
+      "'Trebuchet MS', 'Arial Black', sans-serif",
+      nameTracking,
+      "left"
+    );
 
     targetCtx.textAlign = "right";
     targetCtx.font = "700 26px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText("HP", 588, 86);
-    targetCtx.font = "700 48px 'Trebuchet MS', 'Arial Black', sans-serif";
-    targetCtx.fillText(String(drawState.hp), 654, 97);
+    targetCtx.fillText(limit(drawState.hpLabel || "HP", 8), 588 + headerOffsetX + hpOffsetX, 86 + headerOffsetY + hpOffsetY);
+    targetCtx.font = "700 " + (48 + hpSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillText(String(drawState.hp), 654 + headerOffsetX + hpOffsetX, 97 + headerOffsetY + hpOffsetY);
 
-    drawTypeToken(targetCtx, 672, 88, limit(drawState.typeSymbol || "⚡", 2), 20);
+    drawTypeToken(targetCtx, 672 + headerOffsetX + hpOffsetX, 88 + headerOffsetY + hpOffsetY, limit(drawState.typeSymbol || "⚡", 2), 20);
   }
 
   function drawArtArea(targetCtx, drawState) {
-    var frame = { x: 64, y: 138, w: 606, h: 412 };
+    var artFrameOffsetY = getPrecisionValue(drawState, "artFrameOffsetY", -30, 30);
+    var frame = { x: 64, y: 138 + artFrameOffsetY, w: 606, h: 412 };
     var border = targetCtx.createLinearGradient(frame.x, frame.y, frame.x, frame.y + frame.h);
     border.addColorStop(0, "#72757a");
     border.addColorStop(0.42, "#f3f4f4");
@@ -584,7 +877,8 @@
   }
 
   function drawInfoStrip(targetCtx, drawState) {
-    var strip = { x: 74, y: 553, w: 586, h: 22 };
+    var infoStripOffsetY = getPrecisionValue(drawState, "infoStripOffsetY", -20, 20);
+    var strip = { x: 74, y: 553 + infoStripOffsetY, w: 586, h: 22 };
     var grad = targetCtx.createLinearGradient(strip.x, strip.y, strip.x + strip.w, strip.y);
     grad.addColorStop(0, "#777b80");
     grad.addColorStop(0.16, "#efefef");
@@ -607,38 +901,44 @@
     targetCtx.stroke();
     targetCtx.restore();
 
-    var info = [
-      limit(drawState.cardNumber, 24),
-      limit(drawState.species, 26),
-      "HT: " + limit(drawState.height, 12),
-      "WT: " + limit(drawState.weight, 14)
-    ].join("  ");
+    var info = String(drawState.infoLine || "").trim();
+    if (!info) {
+      info = [
+        limit(drawState.cardNumber, 24),
+        limit(drawState.species, 26),
+        "HT: " + limit(drawState.height, 12),
+        "WT: " + limit(drawState.weight, 14)
+      ].join("  ");
+    }
 
     targetCtx.fillStyle = "#242424";
-    targetCtx.font = "400 10px 'Trebuchet MS', sans-serif";
+    targetCtx.font = "400 11px 'Trebuchet MS', sans-serif";
     targetCtx.textAlign = "center";
     targetCtx.textBaseline = "middle";
     targetCtx.fillText(info, strip.x + strip.w / 2, strip.y + strip.h / 2 + 0.3);
   }
 
   function drawAttacks(targetCtx, drawState) {
+    var attackOffsetY = getPrecisionValue(drawState, "attackOffsetY", -40, 40);
     drawAttackRow(
       targetCtx,
       {
-        y: 620,
+        y: 620 + attackOffsetY,
         cost: drawState.move1.cost,
         name: drawState.move1.name,
         text: drawState.move1.text,
+        state: drawState,
         damage: ""
       }
     );
     drawAttackRow(
       targetCtx,
       {
-        y: 724,
+        y: 724 + attackOffsetY,
         cost: drawState.move2.cost,
         name: drawState.move2.name,
         text: drawState.move2.text,
+        state: drawState,
         damage: drawState.move2.damage > 0 ? String(drawState.move2.damage) : ""
       }
     );
@@ -646,6 +946,10 @@
 
   function drawAttackRow(targetCtx, attack) {
     var y = attack.y;
+    var drawState = attack.state || {};
+    var moveNameSizeAdjust = getPrecisionValue(drawState, "moveNameSizeAdjust", -10, 10);
+    var moveTextSizeAdjust = getPrecisionValue(drawState, "moveTextSizeAdjust", -8, 8);
+    var moveTextLeadingAdjust = getPrecisionValue(drawState, "moveTextLeadingAdjust", -8, 8);
     var tokens = tokenizeCost(attack.cost);
     var tokenX = 86;
 
@@ -656,14 +960,14 @@
     targetCtx.fillStyle = "#1b1407";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "middle";
-    targetCtx.font = "700 23px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.font = "700 " + (23 + moveNameSizeAdjust) + "px 'Trebuchet MS', 'Arial Black', sans-serif";
     drawFittedText(
       targetCtx,
       limit(attack.name, 24),
       200,
       y + 14,
       attack.damage ? 360 : 430,
-      23,
+      23 + moveNameSizeAdjust,
       15,
       "700",
       "'Trebuchet MS', 'Arial Black', sans-serif"
@@ -675,62 +979,76 @@
     }
 
     targetCtx.textAlign = "left";
-    targetCtx.font = "400 14px 'Trebuchet MS', sans-serif";
-    wrapText(targetCtx, attack.text, 76, y + 40, 572, 16.5, 2);
+    targetCtx.font = "400 " + (16 + moveTextSizeAdjust) + "px 'Comic Sans MS', 'Trebuchet MS', sans-serif";
+    wrapText(targetCtx, attack.text, 76, y + 40, 572, 18 + moveTextLeadingAdjust, 2);
   }
 
   function drawFooter(targetCtx, drawState) {
+    var footerOffsetY = getPrecisionValue(drawState, "footerOffsetY", -40, 40);
     targetCtx.lineWidth = 2.1;
     targetCtx.strokeStyle = "rgba(125,102,36,0.72)";
 
     targetCtx.beginPath();
-    targetCtx.moveTo(76, 850);
-    targetCtx.lineTo(364, 850);
-    targetCtx.moveTo(76, 906);
-    targetCtx.lineTo(364, 906);
+    targetCtx.moveTo(76, 850 + footerOffsetY);
+    targetCtx.lineTo(364, 850 + footerOffsetY);
+    targetCtx.moveTo(76, 906 + footerOffsetY);
+    targetCtx.lineTo(364, 906 + footerOffsetY);
     targetCtx.stroke();
 
     targetCtx.fillStyle = "#3a2d12";
     targetCtx.textAlign = "left";
     targetCtx.font = "700 13px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText("weakness", 76, 834);
-    targetCtx.fillText("resistance", 194, 834);
-    targetCtx.fillText("retreat", 76, 891);
+    targetCtx.fillText(limit(drawState.weaknessLabel || "weakness", 18), 76, 834 + footerOffsetY);
+    targetCtx.fillText(limit(drawState.resistanceLabel || "resistance", 18), 194, 834 + footerOffsetY);
+    targetCtx.fillText(limit(drawState.retreatLabel || "retreat", 18), 76, 891 + footerOffsetY);
 
     targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText(limit(drawState.weakness, 18), 76, 872);
-    targetCtx.fillText(limit(drawState.resistance, 18), 194, 872);
+    targetCtx.fillText(limit(drawState.weakness, 18), 76, 872 + footerOffsetY);
+    targetCtx.fillText(limit(drawState.resistance, 18), 194, 872 + footerOffsetY);
 
     var retreatTokens = tokenizeCost(drawState.retreat).slice(0, 3);
     for (var i = 0; i < retreatTokens.length; i += 1) {
-      drawEnergyToken(targetCtx, 126 + i * 26, 927, retreatTokens[i], 10);
+      drawEnergyToken(targetCtx, 126 + i * 26, 927 + footerOffsetY, retreatTokens[i], 10);
     }
 
-    drawFlavorRibbon(targetCtx, drawState.flavorText);
+    drawFlavorRibbon(targetCtx, drawState.flavorText, drawState, footerOffsetY);
 
     targetCtx.fillStyle = "#1d1406";
     targetCtx.textAlign = "left";
     targetCtx.font = "400 11px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText("©" + limit(drawState.year, 6) + " Trading Card Wizard", 74, 960);
+    var copyright = String(drawState.copyrightText || "").trim();
+    if (!copyright) {
+      copyright = "©" + limit(drawState.year, 6) + " Trading Card Wizard";
+    }
+    targetCtx.fillText(limit(copyright, 42), 74, 960 + footerOffsetY);
 
     targetCtx.textAlign = "center";
     targetCtx.font = "italic 13px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText("Illus. " + limit(drawState.illustrator, 32), 493, 958);
+    targetCtx.fillText(limit(drawState.illustratorLabel || "Illus.", 12) + " " + limit(drawState.illustrator, 32), 493, 958 + footerOffsetY);
 
     targetCtx.textAlign = "right";
     targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
-    targetCtx.fillText(limit(drawState.collectorNumber, 12), 644, 956);
+    targetCtx.fillText(limit(drawState.collectorNumber, 12), 644, 956 + footerOffsetY);
 
-    targetCtx.fillStyle = "#1b1811";
-    targetCtx.fillRect(660, 935, 22, 22);
-    targetCtx.fillStyle = "#f5f5f5";
-    targetCtx.fillRect(663.5, 938.5, 6.5, 6.5);
-    targetCtx.fillRect(672.5, 947.5, 6.5, 6.5);
+    if (String(drawState.setSymbol || "").trim()) {
+      targetCtx.textAlign = "center";
+      targetCtx.textBaseline = "middle";
+      targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
+      targetCtx.fillStyle = "#1b1811";
+      targetCtx.fillText(limit(drawState.setSymbol, 3), 671, 946 + footerOffsetY);
+    } else {
+      targetCtx.fillStyle = "#1b1811";
+      targetCtx.fillRect(660, 935 + footerOffsetY, 22, 22);
+      targetCtx.fillStyle = "#f5f5f5";
+      targetCtx.fillRect(663.5, 938.5 + footerOffsetY, 6.5, 6.5);
+      targetCtx.fillRect(672.5, 947.5 + footerOffsetY, 6.5, 6.5);
+    }
   }
 
-  function drawFlavorRibbon(targetCtx, text) {
+  function drawFlavorRibbon(targetCtx, text, drawState, footerOffsetY) {
+    var flavorSizeAdjust = getPrecisionValue(drawState || {}, "flavorSizeAdjust", -8, 8);
     var x = 366;
-    var y = 850;
+    var y = 850 + (footerOffsetY || 0);
     var w = 286;
     var h = 94;
 
@@ -759,8 +1077,8 @@
     targetCtx.fillStyle = "#3a280b";
     targetCtx.textAlign = "left";
     targetCtx.textBaseline = "top";
-    targetCtx.font = "italic 15px 'Trebuchet MS', serif";
-    wrapText(targetCtx, text, x + 15, y + 16, w - 32, 15, 3);
+    targetCtx.font = "italic " + (15 + flavorSizeAdjust) + "px 'Comic Sans MS', 'Trebuchet MS', serif";
+    wrapText(targetCtx, text, x + 15, y + 16, w - 32, 15 + Math.round(flavorSizeAdjust / 2), 3);
   }
 
   function drawTypeToken(targetCtx, x, y, symbol, radius) {
@@ -964,6 +1282,56 @@
     targetCtx.fillText(clean, x, y);
   }
 
+  function drawFittedTrackedText(targetCtx, text, x, y, maxWidth, maxSize, minSize, weight, family, tracking, align) {
+    var clean = String(text || "");
+    var size = maxSize;
+    var best = minSize;
+    while (size >= minSize) {
+      targetCtx.font = weight + " " + size + "px " + family;
+      if (measureTrackedText(targetCtx, clean, tracking) <= maxWidth) {
+        best = size;
+        break;
+      }
+      size -= 1;
+    }
+    targetCtx.font = weight + " " + best + "px " + family;
+    drawTrackedText(targetCtx, clean, x, y, tracking, align || "left");
+  }
+
+  function measureTrackedText(targetCtx, text, tracking) {
+    var chars = Array.from(String(text || ""));
+    if (!chars.length) {
+      return 0;
+    }
+    var width = 0;
+    for (var i = 0; i < chars.length; i += 1) {
+      width += targetCtx.measureText(chars[i]).width;
+    }
+    return width + tracking * (chars.length - 1);
+  }
+
+  function drawTrackedText(targetCtx, text, x, y, tracking, align) {
+    var chars = Array.from(String(text || ""));
+    if (!chars.length) {
+      return;
+    }
+    if (!tracking) {
+      targetCtx.fillText(chars.join(""), x, y);
+      return;
+    }
+    var width = measureTrackedText(targetCtx, chars.join(""), tracking);
+    var cursorX = x;
+    if (align === "center") {
+      cursorX -= width / 2;
+    } else if (align === "right") {
+      cursorX -= width;
+    }
+    for (var i = 0; i < chars.length; i += 1) {
+      targetCtx.fillText(chars[i], cursorX, y);
+      cursorX += targetCtx.measureText(chars[i]).width + tracking;
+    }
+  }
+
   function wrapText(targetCtx, text, x, y, maxWidth, lineHeight, maxLines) {
     var lines = [];
     var paragraphs = String(text || "").split("\n");
@@ -1118,14 +1486,44 @@
     merged.illustrator = String(merged.illustrator || "").slice(0, 40);
     merged.collectorNumber = String(merged.collectorNumber || "").slice(0, 12);
     merged.year = String(merged.year || "").slice(0, 6);
+    merged.hpLabel = String(merged.hpLabel || "").slice(0, 8) || "HP";
+    merged.infoLine = String(merged.infoLine || "").slice(0, 120);
+    merged.weaknessLabel = String(merged.weaknessLabel || "").slice(0, 18) || "weakness";
+    merged.resistanceLabel = String(merged.resistanceLabel || "").slice(0, 18) || "resistance";
+    merged.retreatLabel = String(merged.retreatLabel || "").slice(0, 18) || "retreat";
+    merged.illustratorLabel = String(merged.illustratorLabel || "").slice(0, 12) || "Illus.";
+    merged.copyrightText = String(merged.copyrightText || "").slice(0, 42);
+    merged.setSymbol = String(merged.setSymbol || "").slice(0, 3);
     merged.artDataUrl = String(merged.artDataUrl || "");
     merged.art.zoom = clampInt(merged.art.zoom, 80, 180, 100);
     merged.art.offsetX = clampInt(merged.art.offsetX, -180, 180, 0);
     merged.art.offsetY = clampInt(merged.art.offsetY, -180, 180, 0);
+    merged.visual.theme = sanitizeThemeId(merged.visual.theme);
     merged.visual.hueShift = clampInt(merged.visual.hueShift, -35, 35, 0);
     merged.visual.saturation = clampInt(merged.visual.saturation, 60, 150, 100);
     merged.visual.texture = clampInt(merged.visual.texture, 0, 100, 38);
     merged.visual.cornerRadius = clampInt(merged.visual.cornerRadius, 20, 56, 36);
+    merged.precision = Object.assign({}, DEFAULT_PRECISION, merged.precision || {});
+    merged.precision.headerOffsetX = clampInt(merged.precision.headerOffsetX, -20, 20, 0);
+    merged.precision.headerOffsetY = clampInt(merged.precision.headerOffsetY, -20, 20, 0);
+    merged.precision.nameOffsetX = clampInt(merged.precision.nameOffsetX, -40, 40, 0);
+    merged.precision.nameOffsetY = clampInt(merged.precision.nameOffsetY, -24, 24, 0);
+    merged.precision.nameSizeAdjust = clampInt(merged.precision.nameSizeAdjust, -12, 12, 0);
+    merged.precision.nameTracking = clampInt(merged.precision.nameTracking, -4, 6, 0);
+    merged.precision.hpOffsetX = clampInt(merged.precision.hpOffsetX, -24, 24, 0);
+    merged.precision.hpOffsetY = clampInt(merged.precision.hpOffsetY, -24, 24, 0);
+    merged.precision.hpSizeAdjust = clampInt(merged.precision.hpSizeAdjust, -12, 12, 0);
+    merged.precision.stageOffsetX = clampInt(merged.precision.stageOffsetX, -20, 20, 0);
+    merged.precision.stageOffsetY = clampInt(merged.precision.stageOffsetY, -20, 20, 0);
+    merged.precision.stageSizeAdjust = clampInt(merged.precision.stageSizeAdjust, -10, 10, 0);
+    merged.precision.artFrameOffsetY = clampInt(merged.precision.artFrameOffsetY, -30, 30, 0);
+    merged.precision.infoStripOffsetY = clampInt(merged.precision.infoStripOffsetY, -20, 20, 0);
+    merged.precision.attackOffsetY = clampInt(merged.precision.attackOffsetY, -40, 40, 0);
+    merged.precision.moveNameSizeAdjust = clampInt(merged.precision.moveNameSizeAdjust, -10, 10, 0);
+    merged.precision.moveTextSizeAdjust = clampInt(merged.precision.moveTextSizeAdjust, -8, 8, 0);
+    merged.precision.moveTextLeadingAdjust = clampInt(merged.precision.moveTextLeadingAdjust, -8, 8, 0);
+    merged.precision.footerOffsetY = clampInt(merged.precision.footerOffsetY, -40, 40, 0);
+    merged.precision.flavorSizeAdjust = clampInt(merged.precision.flavorSizeAdjust, -8, 8, 0);
     merged.exportScale = clampInt(merged.exportScale, 2, 5, 3);
 
     return merged;
@@ -1159,6 +1557,14 @@
       illustrator: pick(patch.illustrator, base.illustrator),
       collectorNumber: pick(patch.collectorNumber, base.collectorNumber),
       year: pick(patch.year, base.year),
+      hpLabel: pick(patch.hpLabel, base.hpLabel),
+      infoLine: pick(patch.infoLine, base.infoLine),
+      weaknessLabel: pick(patch.weaknessLabel, base.weaknessLabel),
+      resistanceLabel: pick(patch.resistanceLabel, base.resistanceLabel),
+      retreatLabel: pick(patch.retreatLabel, base.retreatLabel),
+      illustratorLabel: pick(patch.illustratorLabel, base.illustratorLabel),
+      copyrightText: pick(patch.copyrightText, base.copyrightText),
+      setSymbol: pick(patch.setSymbol, base.setSymbol),
       artDataUrl: pick(patch.artDataUrl, base.artDataUrl),
       art: {
         zoom: pick(getPath(patch, "art.zoom"), base.art.zoom),
@@ -1166,10 +1572,33 @@
         offsetY: pick(getPath(patch, "art.offsetY"), base.art.offsetY)
       },
       visual: {
+        theme: pick(getPath(patch, "visual.theme"), base.visual.theme),
         hueShift: pick(getPath(patch, "visual.hueShift"), base.visual.hueShift),
         saturation: pick(getPath(patch, "visual.saturation"), base.visual.saturation),
         texture: pick(getPath(patch, "visual.texture"), base.visual.texture),
         cornerRadius: pick(getPath(patch, "visual.cornerRadius"), base.visual.cornerRadius)
+      },
+      precision: {
+        headerOffsetX: pick(getPath(patch, "precision.headerOffsetX"), base.precision.headerOffsetX),
+        headerOffsetY: pick(getPath(patch, "precision.headerOffsetY"), base.precision.headerOffsetY),
+        nameOffsetX: pick(getPath(patch, "precision.nameOffsetX"), base.precision.nameOffsetX),
+        nameOffsetY: pick(getPath(patch, "precision.nameOffsetY"), base.precision.nameOffsetY),
+        nameSizeAdjust: pick(getPath(patch, "precision.nameSizeAdjust"), base.precision.nameSizeAdjust),
+        nameTracking: pick(getPath(patch, "precision.nameTracking"), base.precision.nameTracking),
+        hpOffsetX: pick(getPath(patch, "precision.hpOffsetX"), base.precision.hpOffsetX),
+        hpOffsetY: pick(getPath(patch, "precision.hpOffsetY"), base.precision.hpOffsetY),
+        hpSizeAdjust: pick(getPath(patch, "precision.hpSizeAdjust"), base.precision.hpSizeAdjust),
+        stageOffsetX: pick(getPath(patch, "precision.stageOffsetX"), base.precision.stageOffsetX),
+        stageOffsetY: pick(getPath(patch, "precision.stageOffsetY"), base.precision.stageOffsetY),
+        stageSizeAdjust: pick(getPath(patch, "precision.stageSizeAdjust"), base.precision.stageSizeAdjust),
+        artFrameOffsetY: pick(getPath(patch, "precision.artFrameOffsetY"), base.precision.artFrameOffsetY),
+        infoStripOffsetY: pick(getPath(patch, "precision.infoStripOffsetY"), base.precision.infoStripOffsetY),
+        attackOffsetY: pick(getPath(patch, "precision.attackOffsetY"), base.precision.attackOffsetY),
+        moveNameSizeAdjust: pick(getPath(patch, "precision.moveNameSizeAdjust"), base.precision.moveNameSizeAdjust),
+        moveTextSizeAdjust: pick(getPath(patch, "precision.moveTextSizeAdjust"), base.precision.moveTextSizeAdjust),
+        moveTextLeadingAdjust: pick(getPath(patch, "precision.moveTextLeadingAdjust"), base.precision.moveTextLeadingAdjust),
+        footerOffsetY: pick(getPath(patch, "precision.footerOffsetY"), base.precision.footerOffsetY),
+        flavorSizeAdjust: pick(getPath(patch, "precision.flavorSizeAdjust"), base.precision.flavorSizeAdjust)
       },
       exportScale: pick(patch.exportScale, base.exportScale)
     };

@@ -6,7 +6,7 @@
     <title>Trading Card Wizard</title>
     <meta
       name="description"
-      content="Browser-based trading card generator inspired by the reference card style."
+      content="Browser-based trading card creator for the discord memes."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -15,9 +15,7 @@
       <header class="topbar">
         <div>
           <h1>Trading Card Wizard</h1>
-          <p class="subtitle">
-            Browser-based card creator inspired by <code>example-card.jpeg</code>
-          </p>
+          <p class="subtitle">Browser-based trading card creator for the discord memes.</p>
         </div>
         <div class="topbar-actions">
           <button id="savePreset" type="button">Save Preset</button>
@@ -164,8 +162,54 @@
             </label>
           </div>
 
+          <h3>Text Labels</h3>
+          <div class="grid two">
+            <label>
+              HP Label
+              <input id="hpLabel" type="text" maxlength="8" />
+            </label>
+            <label>
+              Illustrator Label
+              <input id="illustratorLabel" type="text" maxlength="12" />
+            </label>
+            <label>
+              Weakness Label
+              <input id="weaknessLabel" type="text" maxlength="18" />
+            </label>
+            <label>
+              Resistance Label
+              <input id="resistanceLabel" type="text" maxlength="18" />
+            </label>
+            <label>
+              Retreat Label
+              <input id="retreatLabel" type="text" maxlength="18" />
+            </label>
+            <label>
+              Set Symbol
+              <input id="setSymbol" type="text" maxlength="3" />
+            </label>
+            <label class="wide">
+              Info Line (override)
+              <input id="infoLine" type="text" maxlength="120" />
+            </label>
+            <label class="wide">
+              Copyright Text
+              <input id="copyrightText" type="text" maxlength="42" />
+            </label>
+          </div>
+
           <h3>Visual Tuning</h3>
           <div class="grid two">
+            <label class="wide">
+              Card Theme
+              <select id="cardTheme">
+                <option value="electric">Electric Gold</option>
+                <option value="ember">Ember Red</option>
+                <option value="tidal">Tidal Blue</option>
+                <option value="grove">Grove Green</option>
+                <option value="violet">Violet Arcane</option>
+              </select>
+            </label>
             <label>
               Hue Shift
               <input id="hueShift" type="range" min="-35" max="35" />
@@ -190,6 +234,90 @@
                 <option value="4">4x</option>
                 <option value="5">5x</option>
               </select>
+            </label>
+          </div>
+
+          <h3>Precision Tuning</h3>
+          <div class="grid two">
+            <label>
+              Header Offset X
+              <input id="headerOffsetX" type="range" min="-20" max="20" />
+            </label>
+            <label>
+              Header Offset Y
+              <input id="headerOffsetY" type="range" min="-20" max="20" />
+            </label>
+            <label>
+              Name Offset X
+              <input id="nameOffsetX" type="range" min="-40" max="40" />
+            </label>
+            <label>
+              Name Offset Y
+              <input id="nameOffsetY" type="range" min="-24" max="24" />
+            </label>
+            <label>
+              Name Size Adjust
+              <input id="nameSizeAdjust" type="range" min="-12" max="12" />
+            </label>
+            <label>
+              Name Tracking
+              <input id="nameTracking" type="range" min="-4" max="6" />
+            </label>
+            <label>
+              HP Offset X
+              <input id="hpOffsetX" type="range" min="-24" max="24" />
+            </label>
+            <label>
+              HP Offset Y
+              <input id="hpOffsetY" type="range" min="-24" max="24" />
+            </label>
+            <label>
+              HP Size Adjust
+              <input id="hpSizeAdjust" type="range" min="-12" max="12" />
+            </label>
+            <label>
+              Stage Offset X
+              <input id="stageOffsetX" type="range" min="-20" max="20" />
+            </label>
+            <label>
+              Stage Offset Y
+              <input id="stageOffsetY" type="range" min="-20" max="20" />
+            </label>
+            <label>
+              Stage Size Adjust
+              <input id="stageSizeAdjust" type="range" min="-10" max="10" />
+            </label>
+            <label>
+              Art Frame Offset Y
+              <input id="artFrameOffsetY" type="range" min="-30" max="30" />
+            </label>
+            <label>
+              Info Strip Offset Y
+              <input id="infoStripOffsetY" type="range" min="-20" max="20" />
+            </label>
+            <label>
+              Attack Block Offset Y
+              <input id="attackOffsetY" type="range" min="-40" max="40" />
+            </label>
+            <label>
+              Move Name Size Adjust
+              <input id="moveNameSizeAdjust" type="range" min="-10" max="10" />
+            </label>
+            <label>
+              Move Text Size Adjust
+              <input id="moveTextSizeAdjust" type="range" min="-8" max="8" />
+            </label>
+            <label>
+              Move Text Leading
+              <input id="moveTextLeadingAdjust" type="range" min="-8" max="8" />
+            </label>
+            <label>
+              Footer Offset Y
+              <input id="footerOffsetY" type="range" min="-40" max="40" />
+            </label>
+            <label>
+              Flavor Text Size
+              <input id="flavorSizeAdjust" type="range" min="-8" max="8" />
             </label>
           </div>
         </section>
