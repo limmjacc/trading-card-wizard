@@ -6,6 +6,10 @@
   var STORAGE_KEY = "tcw-state-v1";
   var STATUS_MS = 3800;
   var DEFAULT_THEME_ID = "electric";
+  var DEFAULT_CARD_TYPE = "pokemon";
+  var VALID_CARD_TYPES = ["pokemon", "trainer", "energy"];
+  var VALID_TRAINER_CATEGORIES = ["item", "supporter", "stadium", "tool"];
+  var VALID_ENERGY_SUBTYPES = ["basic", "special"];
 
   var THEME_PRESETS = {
     electric: {
@@ -164,6 +168,7 @@
   };
 
   var DEFAULT_STATE = {
+    cardType: DEFAULT_CARD_TYPE,
     stage: "BASIC",
     name: "Pikachu",
     hp: 60,
@@ -187,6 +192,17 @@
     resistance: "—",
     retreat: "✶",
     flavorText: "This is an extremely rare Pikachu card. You're very lucky to have found it!",
+    trainer: {
+      tag: "TRAINER",
+      category: "item",
+      effect:
+        "Draw 2 cards. If you drew any cards in this way, you may switch your Active Pokemon with 1 of your Benched Pokemon."
+    },
+    energy: {
+      subtype: "basic",
+      effect:
+        "As long as this card is attached to a Pokemon, it provides 1 Energy of this card's type."
+    },
     illustrator: "Kouki Saitou",
     collectorNumber: "115/114",
     year: "2026",
@@ -245,6 +261,9 @@
     resistance: "resistance",
     retreat: "retreat",
     flavorText: "flavorText",
+    trainerTag: "trainer.tag",
+    trainerEffect: "trainer.effect",
+    energyEffect: "energy.effect",
     illustrator: "illustrator",
     collectorNumber: "collectorNumber",
     yearText: "year",
@@ -256,6 +275,11 @@
     illustratorLabel: "illustratorLabel",
     copyrightText: "copyrightText",
     setSymbol: "setSymbol"
+  };
+
+  var selectMap = {
+    trainerCategory: "trainer.category",
+    energySubtype: "energy.subtype"
   };
 
   var rangeMap = {
@@ -313,6 +337,33 @@
         queueRender();
       });
     });
+
+    Object.keys(selectMap).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) {
+        return;
+      }
+      el.addEventListener("change", function () {
+        setPath(state, selectMap[id], el.value);
+        if (id === "trainerCategory") {
+          state.trainer.category = sanitizeTrainerCategory(state.trainer.category);
+        } else if (id === "energySubtype") {
+          state.energy.subtype = sanitizeEnergySubtype(state.energy.subtype);
+        }
+        scheduleAutosave();
+        queueRender();
+      });
+    });
+
+    var cardType = document.getElementById("cardType");
+    if (cardType) {
+      cardType.addEventListener("change", function () {
+        state.cardType = sanitizeCardType(cardType.value);
+        updateCardModeVisibility();
+        scheduleAutosave();
+        queueRender();
+      });
+    }
 
     var exportScale = document.getElementById("exportScale");
     exportScale.addEventListener("change", function () {
@@ -491,11 +542,23 @@
   }
 
   function hydrateControls() {
+    state.cardType = sanitizeCardType(state.cardType);
+    state.trainer.category = sanitizeTrainerCategory(state.trainer.category);
+    state.energy.subtype = sanitizeEnergySubtype(state.energy.subtype);
     state.visual.theme = sanitizeThemeId(state.visual.theme);
     applyConfiguratorTheme(state.visual.theme);
 
     Object.keys(inputMap).forEach(function (id) {
       var path = inputMap[id];
+      var el = document.getElementById(id);
+      if (!el) {
+        return;
+      }
+      el.value = String(getPath(state, path) || "");
+    });
+
+    Object.keys(selectMap).forEach(function (id) {
+      var path = selectMap[id];
       var el = document.getElementById(id);
       if (!el) {
         return;
@@ -519,8 +582,31 @@
       cardTheme.value = state.visual.theme;
     }
 
+    var cardType = document.getElementById("cardType");
+    if (cardType) {
+      cardType.value = state.cardType;
+    }
+
     var exportScale = document.getElementById("exportScale");
     exportScale.value = String(state.exportScale);
+
+    updateCardModeVisibility();
+  }
+
+  function updateCardModeVisibility() {
+    var activeType = sanitizeCardType(state.cardType);
+    document.body.setAttribute("data-card-type", activeType);
+
+    var modeEls = document.querySelectorAll("[data-card-modes]");
+    for (var i = 0; i < modeEls.length; i += 1) {
+      var raw = String(modeEls[i].getAttribute("data-card-modes") || "");
+      var modes = raw
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+      var isVisible = modes.length === 0 || modes.indexOf(activeType) !== -1;
+      modeEls[i].classList.toggle("mode-hidden", !isVisible);
+    }
   }
 
   function setPairValue(rangeId, numberId, value) {
@@ -536,6 +622,30 @@
       return candidate;
     }
     return DEFAULT_THEME_ID;
+  }
+
+  function sanitizeCardType(cardType) {
+    var candidate = String(cardType || "").trim().toLowerCase();
+    if (VALID_CARD_TYPES.indexOf(candidate) !== -1) {
+      return candidate;
+    }
+    return DEFAULT_CARD_TYPE;
+  }
+
+  function sanitizeTrainerCategory(category) {
+    var candidate = String(category || "").trim().toLowerCase();
+    if (VALID_TRAINER_CATEGORIES.indexOf(candidate) !== -1) {
+      return candidate;
+    }
+    return "item";
+  }
+
+  function sanitizeEnergySubtype(subtype) {
+    var candidate = String(subtype || "").trim().toLowerCase();
+    if (VALID_ENERGY_SUBTYPES.indexOf(candidate) !== -1) {
+      return candidate;
+    }
+    return "basic";
   }
 
   function applySelectedTheme(themeId) {
@@ -629,6 +739,7 @@
     var hue = 50 + clampInt(drawState.visual.hueShift, -35, 35, 0);
     var saturation = clampInt(drawState.visual.saturation, 60, 150, 100);
     var texture = clampInt(drawState.visual.texture, 0, 100, 38);
+    var cardType = sanitizeCardType(drawState.cardType);
 
     targetCtx.clearRect(0, 0, CARD_WIDTH * S, CARD_HEIGHT * S);
     targetCtx.save();
@@ -637,13 +748,350 @@
     drawShadow(targetCtx, radius);
     drawOuterFrame(targetCtx, radius, hue, saturation);
     drawInnerPanel(targetCtx, radius - 12, hue, saturation, texture);
+    if (cardType === "trainer") {
+      drawTrainerCard(targetCtx, drawState);
+    } else if (cardType === "energy") {
+      drawEnergyCard(targetCtx, drawState);
+    } else {
+      drawPokemonCard(targetCtx, drawState);
+    }
+
+    targetCtx.restore();
+  }
+
+  function drawPokemonCard(targetCtx, drawState) {
     drawHeader(targetCtx, drawState);
     drawArtArea(targetCtx, drawState);
     drawInfoStrip(targetCtx, drawState);
     drawAttacks(targetCtx, drawState);
     drawFooter(targetCtx, drawState);
+  }
 
+  function drawTrainerCard(targetCtx, drawState) {
+    drawTrainerHeader(targetCtx, drawState);
+    drawArtArea(targetCtx, drawState);
+    drawTrainerTextBox(targetCtx, drawState);
+    drawMetaFooter(targetCtx, drawState, 958);
+  }
+
+  function drawEnergyCard(targetCtx, drawState) {
+    drawEnergyHeader(targetCtx, drawState);
+    drawEnergyCenterPanel(targetCtx, drawState);
+    drawMetaFooter(targetCtx, drawState, 958);
+  }
+
+  function drawTrainerHeader(targetCtx, drawState) {
+    var headerOffsetX = getPrecisionValue(drawState, "headerOffsetX", -20, 20);
+    var headerOffsetY = getPrecisionValue(drawState, "headerOffsetY", -20, 20);
+    var nameOffsetX = getPrecisionValue(drawState, "nameOffsetX", -40, 40);
+    var nameOffsetY = getPrecisionValue(drawState, "nameOffsetY", -24, 24);
+    var nameSizeAdjust = getPrecisionValue(drawState, "nameSizeAdjust", -12, 12);
+    var nameTracking = getPrecisionValue(drawState, "nameTracking", -4, 6);
+    var header = { x: 42 + headerOffsetX, y: 56 + headerOffsetY, w: 650, h: 74 };
+    var title = limit(drawState.name, 28);
+    var trainerTag = limit(getPath(drawState, "trainer.tag") || "TRAINER", 16);
+    var category = getTrainerCategoryLabel(getPath(drawState, "trainer.category"));
+
+    var bar = targetCtx.createLinearGradient(header.x, header.y, header.x + header.w, header.y);
+    bar.addColorStop(0, "#7f848a");
+    bar.addColorStop(0.2, "#f6f8fa");
+    bar.addColorStop(0.55, "#b6bcc2");
+    bar.addColorStop(1, "#7d8288");
+    targetCtx.fillStyle = bar;
+    roundedRect(targetCtx, header.x, header.y, header.w, header.h, 26);
+    targetCtx.fill();
+
+    targetCtx.lineWidth = 2.2;
+    targetCtx.strokeStyle = "rgba(51,51,51,0.9)";
+    roundedRect(targetCtx, header.x + 1, header.y + 1, header.w - 2, header.h - 2, 25);
+    targetCtx.stroke();
+
+    targetCtx.font = "700 20px 'Trebuchet MS', 'Arial Black', sans-serif";
+    var tagWidth = clamp(targetCtx.measureText(trainerTag).width + 28, 126, 206);
+    var categoryWidth = clamp(targetCtx.measureText(category).width + 30, 130, 214);
+    var chipY = header.y + 11;
+    var chipH = 52;
+    var tagChip = { x: header.x + 10, y: chipY, w: tagWidth, h: chipH };
+    var categoryChip = { x: header.x + header.w - categoryWidth - 10, y: chipY, w: categoryWidth, h: chipH };
+
+    var tagGrad = targetCtx.createLinearGradient(tagChip.x, tagChip.y, tagChip.x + tagChip.w, tagChip.y + tagChip.h);
+    tagGrad.addColorStop(0, "#d8dde1");
+    tagGrad.addColorStop(0.45, "#f4f7f8");
+    tagGrad.addColorStop(1, "#adb4ba");
+    targetCtx.fillStyle = tagGrad;
+    roundedRect(targetCtx, tagChip.x, tagChip.y, tagChip.w, tagChip.h, 14);
+    targetCtx.fill();
+    targetCtx.strokeStyle = "rgba(73,77,82,0.84)";
+    targetCtx.lineWidth = 1.4;
+    roundedRect(targetCtx, tagChip.x + 0.5, tagChip.y + 0.5, tagChip.w - 1, tagChip.h - 1, 13.5);
+    targetCtx.stroke();
+
+    var categoryGrad = targetCtx.createLinearGradient(
+      categoryChip.x,
+      categoryChip.y,
+      categoryChip.x + categoryChip.w,
+      categoryChip.y
+    );
+    categoryGrad.addColorStop(0, "#f4ce63");
+    categoryGrad.addColorStop(0.5, "#f7e28f");
+    categoryGrad.addColorStop(1, "#cb9f34");
+    targetCtx.fillStyle = categoryGrad;
+    roundedRect(targetCtx, categoryChip.x, categoryChip.y, categoryChip.w, categoryChip.h, 14);
+    targetCtx.fill();
+    targetCtx.strokeStyle = "rgba(95,71,23,0.84)";
+    roundedRect(targetCtx, categoryChip.x + 0.5, categoryChip.y + 0.5, categoryChip.w - 1, categoryChip.h - 1, 13.5);
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#3a3f45";
+    targetCtx.textAlign = "center";
+    targetCtx.textBaseline = "middle";
+    targetCtx.font = "700 20px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillText(trainerTag, tagChip.x + tagChip.w * 0.5, tagChip.y + tagChip.h * 0.5 + 1);
+
+    targetCtx.fillStyle = "#4b3912";
+    targetCtx.font = "700 20px 'Trebuchet MS', 'Arial Black', sans-serif";
+    targetCtx.fillText(category, categoryChip.x + categoryChip.w * 0.5, categoryChip.y + categoryChip.h * 0.5 + 1);
+
+    var nameLeft = tagChip.x + tagChip.w + 14;
+    var nameRight = categoryChip.x - 14;
+    var nameWidth = Math.max(150, nameRight - nameLeft);
+    var nameX = nameLeft + nameWidth * 0.5 + nameOffsetX;
+    targetCtx.fillStyle = "#141414";
+    drawFittedTrackedText(
+      targetCtx,
+      title,
+      nameX,
+      header.y + header.h * 0.5 + 1 + nameOffsetY,
+      nameWidth,
+      48 + nameSizeAdjust,
+      24,
+      "700",
+      "'Trebuchet MS', 'Arial Black', sans-serif",
+      nameTracking,
+      "center"
+    );
+  }
+
+  function drawTrainerTextBox(targetCtx, drawState) {
+    var infoStripOffsetY = getPrecisionValue(drawState, "infoStripOffsetY", -20, 20);
+    var panel = { x: 72, y: 582 + infoStripOffsetY, w: 590, h: 302 };
+    var gradient = targetCtx.createLinearGradient(panel.x, panel.y, panel.x, panel.y + panel.h);
+    gradient.addColorStop(0, "rgba(248, 242, 222, 0.94)");
+    gradient.addColorStop(1, "rgba(230, 214, 166, 0.95)");
+    targetCtx.fillStyle = gradient;
+    roundedRect(targetCtx, panel.x, panel.y, panel.w, panel.h, 12);
+    targetCtx.fill();
+
+    targetCtx.lineWidth = 2;
+    targetCtx.strokeStyle = "rgba(96,75,30,0.84)";
+    roundedRect(targetCtx, panel.x + 0.5, panel.y + 0.5, panel.w - 1, panel.h - 1, 11.5);
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#4d3a13";
+    targetCtx.textAlign = "left";
+    targetCtx.textBaseline = "middle";
+    targetCtx.font = "700 14px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText(getTrainerCategoryLabel(getPath(drawState, "trainer.category")).toUpperCase(), panel.x + 16, panel.y + 22);
+
+    targetCtx.fillStyle = "#1c1407";
+    targetCtx.textBaseline = "top";
+    targetCtx.font = "400 24px 'Trebuchet MS', sans-serif";
+    wrapText(
+      targetCtx,
+      limit(getPath(drawState, "trainer.effect"), 520),
+      panel.x + 16,
+      panel.y + 44,
+      panel.w - 32,
+      30,
+      8
+    );
+  }
+
+  function drawEnergyHeader(targetCtx, drawState) {
+    var headerOffsetX = getPrecisionValue(drawState, "headerOffsetX", -20, 20);
+    var headerOffsetY = getPrecisionValue(drawState, "headerOffsetY", -20, 20);
+    var nameOffsetX = getPrecisionValue(drawState, "nameOffsetX", -40, 40);
+    var nameOffsetY = getPrecisionValue(drawState, "nameOffsetY", -24, 24);
+    var nameSizeAdjust = getPrecisionValue(drawState, "nameSizeAdjust", -12, 12);
+    var nameTracking = getPrecisionValue(drawState, "nameTracking", -4, 6);
+    var header = { x: 42 + headerOffsetX, y: 56 + headerOffsetY, w: 650, h: 86 };
+    var subtype = getEnergySubtypeLabel(getPath(drawState, "energy.subtype"));
+    var symbol = limit(drawState.typeSymbol || "⚡", 2);
+
+    var bar = targetCtx.createLinearGradient(header.x, header.y, header.x + header.w, header.y);
+    bar.addColorStop(0, "#8c8f95");
+    bar.addColorStop(0.2, "#f1f3f5");
+    bar.addColorStop(0.55, "#b5bcc3");
+    bar.addColorStop(1, "#868b92");
+    targetCtx.fillStyle = bar;
+    roundedRect(targetCtx, header.x, header.y, header.w, header.h, 27);
+    targetCtx.fill();
+
+    targetCtx.lineWidth = 2.2;
+    targetCtx.strokeStyle = "rgba(54,54,54,0.9)";
+    roundedRect(targetCtx, header.x + 1, header.y + 1, header.w - 2, header.h - 2, 26);
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#41464d";
+    targetCtx.textAlign = "center";
+    targetCtx.textBaseline = "middle";
+    targetCtx.font = "700 20px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText(subtype, header.x + header.w * 0.5, header.y + 24);
+
+    targetCtx.fillStyle = "#141414";
+    drawFittedTrackedText(
+      targetCtx,
+      limit(drawState.name, 28),
+      header.x + header.w * 0.5 + nameOffsetX,
+      header.y + 57 + nameOffsetY,
+      500,
+      49 + nameSizeAdjust,
+      26,
+      "700",
+      "'Trebuchet MS', 'Arial Black', sans-serif",
+      nameTracking,
+      "center"
+    );
+
+    drawTypeToken(targetCtx, header.x + header.w - 33, header.y + 43, symbol, 19);
+  }
+
+  function drawEnergyCenterPanel(targetCtx, drawState) {
+    var artFrameOffsetY = getPrecisionValue(drawState, "artFrameOffsetY", -30, 30);
+    var panel = { x: 86, y: 166 + artFrameOffsetY, w: 562, h: 676 };
+    var symbol = limit(drawState.typeSymbol || "⚡", 2);
+    var palette = getEnergyTokenPalette(symbol);
+    var background = targetCtx.createLinearGradient(panel.x, panel.y, panel.x, panel.y + panel.h);
+    background.addColorStop(0, "rgba(253,248,228,0.9)");
+    background.addColorStop(1, "rgba(227,209,150,0.93)");
+    targetCtx.fillStyle = background;
+    roundedRect(targetCtx, panel.x, panel.y, panel.w, panel.h, 13);
+    targetCtx.fill();
+
+    targetCtx.lineWidth = 2;
+    targetCtx.strokeStyle = "rgba(91,69,24,0.84)";
+    roundedRect(targetCtx, panel.x + 0.5, panel.y + 0.5, panel.w - 1, panel.h - 1, 12.5);
+    targetCtx.stroke();
+
+    targetCtx.save();
+    roundedRect(targetCtx, panel.x + 3, panel.y + 3, panel.w - 6, panel.h - 6, 10);
+    targetCtx.clip();
+
+    var rayCenterX = panel.x + panel.w * 0.5;
+    var rayCenterY = panel.y + panel.h * 0.41;
+    for (var i = 0; i < 18; i += 1) {
+      var start = (Math.PI * 2 * i) / 18;
+      var end = start + Math.PI / 18;
+      targetCtx.beginPath();
+      targetCtx.moveTo(rayCenterX, rayCenterY);
+      targetCtx.arc(rayCenterX, rayCenterY, panel.w * 0.74, start, end);
+      targetCtx.closePath();
+      targetCtx.fillStyle = i % 2 === 0 ? "rgba(255,255,255,0.24)" : "rgba(0,0,0,0.05)";
+      targetCtx.fill();
+    }
+
+    var glow = targetCtx.createRadialGradient(rayCenterX, rayCenterY, 46, rayCenterX, rayCenterY, 278);
+    glow.addColorStop(0, "rgba(255,255,255,0.56)");
+    glow.addColorStop(1, "rgba(255,255,255,0)");
+    targetCtx.fillStyle = glow;
+    targetCtx.fillRect(panel.x, panel.y, panel.w, panel.h);
     targetCtx.restore();
+
+    drawTypeToken(targetCtx, panel.x + panel.w * 0.5, panel.y + panel.h * 0.42, symbol, 112);
+
+    var effectText = String(getPath(drawState, "energy.effect") || "").trim();
+    if (!effectText) {
+      return;
+    }
+
+    var effectPanel = { x: panel.x + 24, y: panel.y + panel.h - 246, w: panel.w - 48, h: 212 };
+    var effectGrad = targetCtx.createLinearGradient(effectPanel.x, effectPanel.y, effectPanel.x, effectPanel.y + effectPanel.h);
+    effectGrad.addColorStop(0, "rgba(255,255,255,0.9)");
+    effectGrad.addColorStop(1, "rgba(245,235,203,0.9)");
+    targetCtx.fillStyle = effectGrad;
+    roundedRect(targetCtx, effectPanel.x, effectPanel.y, effectPanel.w, effectPanel.h, 9);
+    targetCtx.fill();
+
+    targetCtx.strokeStyle = palette.stroke;
+    targetCtx.lineWidth = 1.6;
+    roundedRect(targetCtx, effectPanel.x + 0.5, effectPanel.y + 0.5, effectPanel.w - 1, effectPanel.h - 1, 8.5);
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#1e1507";
+    targetCtx.textAlign = "left";
+    targetCtx.textBaseline = "top";
+    targetCtx.font = "400 24px 'Trebuchet MS', sans-serif";
+    wrapText(targetCtx, limit(effectText, 420), effectPanel.x + 14, effectPanel.y + 14, effectPanel.w - 28, 29, 6);
+  }
+
+  function drawMetaFooter(targetCtx, drawState, baselineY) {
+    var footerOffsetY = getPrecisionValue(drawState, "footerOffsetY", -40, 40);
+    var y = baselineY + footerOffsetY;
+
+    targetCtx.lineWidth = 1.8;
+    targetCtx.strokeStyle = "rgba(125,102,36,0.72)";
+    targetCtx.beginPath();
+    targetCtx.moveTo(76, y - 30);
+    targetCtx.lineTo(658, y - 30);
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#1d1406";
+    targetCtx.textBaseline = "middle";
+    targetCtx.textAlign = "left";
+    targetCtx.font = "400 11px 'Trebuchet MS', sans-serif";
+    var copyright = String(drawState.copyrightText || "").trim();
+    if (!copyright) {
+      copyright = "©" + limit(drawState.year, 6) + " Trading Card Wizard";
+    }
+    targetCtx.fillText(limit(copyright, 42), 74, y);
+
+    targetCtx.textAlign = "center";
+    targetCtx.font = "italic 13px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText(
+      limit(drawState.illustratorLabel || "Illus.", 12) + " " + limit(drawState.illustrator, 32),
+      493,
+      y - 1
+    );
+
+    targetCtx.textAlign = "right";
+    targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
+    targetCtx.fillText(limit(drawState.collectorNumber, 12), 644, y - 2);
+
+    if (String(drawState.setSymbol || "").trim()) {
+      targetCtx.textAlign = "center";
+      targetCtx.textBaseline = "middle";
+      targetCtx.font = "700 19px 'Trebuchet MS', sans-serif";
+      targetCtx.fillStyle = "#1b1811";
+      targetCtx.fillText(limit(drawState.setSymbol, 3), 671, y - 12);
+    } else {
+      targetCtx.fillStyle = "#1b1811";
+      targetCtx.fillRect(660, y - 23, 22, 22);
+      targetCtx.fillStyle = "#f5f5f5";
+      targetCtx.fillRect(663.5, y - 19.5, 6.5, 6.5);
+      targetCtx.fillRect(672.5, y - 10.5, 6.5, 6.5);
+    }
+  }
+
+  function getTrainerCategoryLabel(category) {
+    var normalized = sanitizeTrainerCategory(category);
+    if (normalized === "supporter") {
+      return "Supporter";
+    }
+    if (normalized === "stadium") {
+      return "Stadium";
+    }
+    if (normalized === "tool") {
+      return "Pokemon Tool";
+    }
+    return "Item";
+  }
+
+  function getEnergySubtypeLabel(subtype) {
+    var normalized = sanitizeEnergySubtype(subtype);
+    if (normalized === "special") {
+      return "Special Energy";
+    }
+    return "Basic Energy";
   }
 
   function getPrecisionValue(drawState, key, min, max) {
@@ -1498,6 +1946,7 @@
   function sanitizeState(raw) {
     var merged = mergeState(DEFAULT_STATE, raw || {});
 
+    merged.cardType = sanitizeCardType(merged.cardType);
     merged.stage = String(merged.stage || "").slice(0, 14) || "BASIC";
     merged.name = String(merged.name || "").slice(0, 28) || "Card Name";
     merged.hp = clampInt(merged.hp, 10, 300, 60);
@@ -1517,6 +1966,11 @@
     merged.resistance = String(merged.resistance || "").slice(0, 18);
     merged.retreat = String(merged.retreat || "").slice(0, 18);
     merged.flavorText = String(merged.flavorText || "").slice(0, 160);
+    merged.trainer.tag = String(merged.trainer.tag || "").slice(0, 16) || "TRAINER";
+    merged.trainer.category = sanitizeTrainerCategory(merged.trainer.category);
+    merged.trainer.effect = String(merged.trainer.effect || "").slice(0, 520);
+    merged.energy.subtype = sanitizeEnergySubtype(merged.energy.subtype);
+    merged.energy.effect = String(merged.energy.effect || "").slice(0, 420);
     merged.illustrator = String(merged.illustrator || "").slice(0, 40);
     merged.collectorNumber = String(merged.collectorNumber || "").slice(0, 12);
     merged.year = String(merged.year || "").slice(0, 6);
@@ -1565,6 +2019,7 @@
 
   function mergeState(base, patch) {
     return {
+      cardType: pick(patch.cardType, base.cardType),
       stage: pick(patch.stage, base.stage),
       name: pick(patch.name, base.name),
       hp: pick(patch.hp, base.hp),
@@ -1588,6 +2043,15 @@
       resistance: pick(patch.resistance, base.resistance),
       retreat: pick(patch.retreat, base.retreat),
       flavorText: pick(patch.flavorText, base.flavorText),
+      trainer: {
+        tag: pick(getPath(patch, "trainer.tag"), base.trainer.tag),
+        category: pick(getPath(patch, "trainer.category"), base.trainer.category),
+        effect: pick(getPath(patch, "trainer.effect"), base.trainer.effect)
+      },
+      energy: {
+        subtype: pick(getPath(patch, "energy.subtype"), base.energy.subtype),
+        effect: pick(getPath(patch, "energy.effect"), base.energy.effect)
+      },
       illustrator: pick(patch.illustrator, base.illustrator),
       collectorNumber: pick(patch.collectorNumber, base.collectorNumber),
       year: pick(patch.year, base.year),

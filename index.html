@@ -31,11 +31,19 @@
           <h2>Card Data</h2>
 
           <div class="grid two">
-            <label>
+            <label class="wide">
+              Card Type
+              <select id="cardType">
+                <option value="pokemon">Pokemon</option>
+                <option value="trainer">Trainer</option>
+                <option value="energy">Energy</option>
+              </select>
+            </label>
+            <label data-card-modes="pokemon">
               Stage
               <input id="stage" type="text" maxlength="14" />
             </label>
-            <label class="type-symbol-control">
+            <label class="type-symbol-control" data-card-modes="pokemon energy">
               Type Symbol
               <input id="typeSymbol" type="text" maxlength="2" />
             </label>
@@ -43,7 +51,7 @@
               Name
               <input id="cardName" type="text" maxlength="28" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               HP
               <div class="inline-pair">
                 <input id="hpRange" type="range" min="10" max="300" />
@@ -58,15 +66,15 @@
               Card Number
               <input id="cardNumber" type="text" maxlength="24" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Species
               <input id="species" type="text" maxlength="26" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Height
               <input id="heightText" type="text" maxlength="12" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Weight
               <input id="weightText" type="text" maxlength="14" />
             </label>
@@ -91,8 +99,8 @@
             </label>
           </div>
 
-          <h3>Attack 1</h3>
-          <div class="grid two">
+          <h3 data-card-modes="pokemon">Attack 1</h3>
+          <div class="grid two" data-card-modes="pokemon">
             <label>
               Cost Tokens
               <input id="move1Cost" type="text" maxlength="20" />
@@ -107,8 +115,8 @@
             </label>
           </div>
 
-          <h3>Attack 2</h3>
-          <div class="grid two">
+          <h3 data-card-modes="pokemon">Attack 2</h3>
+          <div class="grid two" data-card-modes="pokemon">
             <label>
               Cost Tokens
               <input id="move2Cost" type="text" maxlength="20" />
@@ -130,17 +138,53 @@
             </label>
           </div>
 
+          <h3 data-card-modes="trainer">Trainer Card</h3>
+          <div class="grid two" data-card-modes="trainer">
+            <label>
+              Trainer Banner
+              <input id="trainerTag" type="text" maxlength="16" />
+            </label>
+            <label>
+              Trainer Class
+              <select id="trainerCategory">
+                <option value="item">Item</option>
+                <option value="supporter">Supporter</option>
+                <option value="stadium">Stadium</option>
+                <option value="tool">Pokemon Tool</option>
+              </select>
+            </label>
+            <label class="wide">
+              Effect Text
+              <textarea id="trainerEffect" rows="4" maxlength="520"></textarea>
+            </label>
+          </div>
+
+          <h3 data-card-modes="energy">Energy Card</h3>
+          <div class="grid two" data-card-modes="energy">
+            <label>
+              Energy Subtype
+              <select id="energySubtype">
+                <option value="basic">Basic</option>
+                <option value="special">Special</option>
+              </select>
+            </label>
+            <label class="wide">
+              Effect Text
+              <textarea id="energyEffect" rows="4" maxlength="420"></textarea>
+            </label>
+          </div>
+
           <h3>Footer</h3>
           <div class="grid two">
-            <label>
+            <label data-card-modes="pokemon">
               Weakness
               <input id="weakness" type="text" maxlength="18" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Resistance
               <input id="resistance" type="text" maxlength="18" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Retreat
               <input id="retreat" type="text" maxlength="18" />
             </label>
@@ -148,7 +192,7 @@
               Year
               <input id="yearText" type="text" maxlength="6" />
             </label>
-            <label class="wide">
+            <label class="wide" data-card-modes="pokemon">
               Flavor Ribbon Text
               <textarea id="flavorText" rows="2" maxlength="160"></textarea>
             </label>
@@ -164,7 +208,7 @@
 
           <h3>Text Labels</h3>
           <div class="grid two">
-            <label>
+            <label data-card-modes="pokemon">
               HP Label
               <input id="hpLabel" type="text" maxlength="8" />
             </label>
@@ -172,15 +216,15 @@
               Illustrator Label
               <input id="illustratorLabel" type="text" maxlength="12" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Weakness Label
               <input id="weaknessLabel" type="text" maxlength="18" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Resistance Label
               <input id="resistanceLabel" type="text" maxlength="18" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Retreat Label
               <input id="retreatLabel" type="text" maxlength="18" />
             </label>
@@ -188,7 +232,7 @@
               Set Symbol
               <input id="setSymbol" type="text" maxlength="3" />
             </label>
-            <label class="wide">
+            <label class="wide" data-card-modes="pokemon">
               Info Line (override)
               <input id="infoLine" type="text" maxlength="120" />
             </label>
@@ -263,27 +307,27 @@
               Name Tracking
               <input id="nameTracking" type="range" min="-4" max="6" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               HP Offset X
               <input id="hpOffsetX" type="range" min="-24" max="24" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               HP Offset Y
               <input id="hpOffsetY" type="range" min="-24" max="24" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               HP Size Adjust
               <input id="hpSizeAdjust" type="range" min="-12" max="12" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Stage Offset X
               <input id="stageOffsetX" type="range" min="-20" max="20" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Stage Offset Y
               <input id="stageOffsetY" type="range" min="-20" max="20" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Stage Size Adjust
               <input id="stageSizeAdjust" type="range" min="-10" max="10" />
             </label>
@@ -291,23 +335,23 @@
               Art Frame Offset Y
               <input id="artFrameOffsetY" type="range" min="-30" max="30" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Info Strip Offset Y
               <input id="infoStripOffsetY" type="range" min="-20" max="20" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Attack Block Offset Y
               <input id="attackOffsetY" type="range" min="-40" max="40" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Move Name Size Adjust
               <input id="moveNameSizeAdjust" type="range" min="-10" max="10" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Move Text Size Adjust
               <input id="moveTextSizeAdjust" type="range" min="-8" max="8" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Move Text Leading
               <input id="moveTextLeadingAdjust" type="range" min="-8" max="8" />
             </label>
@@ -315,7 +359,7 @@
               Footer Offset Y
               <input id="footerOffsetY" type="range" min="-40" max="40" />
             </label>
-            <label>
+            <label data-card-modes="pokemon">
               Flavor Text Size
               <input id="flavorSizeAdjust" type="range" min="-8" max="8" />
             </label>

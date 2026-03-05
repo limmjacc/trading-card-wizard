@@ -154,6 +154,10 @@ code {
   grid-column: 1 / -1;
 }
 
+.mode-hidden {
+  display: none !important;
+}
+
 label {
   display: grid;
   gap: 0.25rem;
