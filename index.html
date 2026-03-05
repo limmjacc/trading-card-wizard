@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trading Card Wizard</title>
+    <meta
+      name="description"
+      content="Browser-based trading card generator inspired by the reference card style."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div>
+          <h1>Trading Card Wizard</h1>
+          <p class="subtitle">
+            Browser-based card creator inspired by <code>example-card.jpeg</code>
+          </p>
+        </div>
+        <div class="topbar-actions">
+          <button id="savePreset" type="button">Save Preset</button>
+          <button id="loadPreset" type="button">Load Preset</button>
+          <button id="downloadPreset" type="button">Download JSON</button>
+          <button id="uploadPresetButton" type="button">Upload JSON</button>
+          <input id="uploadPresetInput" type="file" accept=".json,application/json" hidden />
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel controls">
+          <h2>Card Data</h2>
+
+          <div class="grid two">
+            <label>
+              Stage
+              <input id="stage" type="text" maxlength="14" />
+            </label>
+            <label>
+              Type Symbol
+              <input id="typeSymbol" type="text" maxlength="2" />
+            </label>
+            <label class="wide">
+              Name
+              <input id="cardName" type="text" maxlength="28" />
+            </label>
+            <label>
+              HP
+              <div class="inline-pair">
+                <input id="hpRange" type="range" min="10" max="300" />
+                <input id="hpNumber" type="number" min="10" max="300" />
+              </div>
+            </label>
+          </div>
+
+          <h3>Art & Identity</h3>
+          <div class="grid two">
+            <label>
+              Card Number
+              <input id="cardNumber" type="text" maxlength="24" />
+            </label>
+            <label>
+              Species
+              <input id="species" type="text" maxlength="26" />
+            </label>
+            <label>
+              Height
+              <input id="heightText" type="text" maxlength="12" />
+            </label>
+            <label>
+              Weight
+              <input id="weightText" type="text" maxlength="14" />
+            </label>
+            <label class="wide">
+              Artwork Image
+              <div class="inline-pair upload-row">
+                <input id="artUpload" type="file" accept="image/*" />
+                <button id="clearArt" type="button">Use Default</button>
+              </div>
+            </label>
+            <label>
+              Art Zoom
+              <input id="artZoom" type="range" min="80" max="180" />
+            </label>
+            <label>
+              Art Offset X
+              <input id="artOffsetX" type="range" min="-180" max="180" />
+            </label>
+            <label>
+              Art Offset Y
+              <input id="artOffsetY" type="range" min="-180" max="180" />
+            </label>
+          </div>
+
+          <h3>Attack 1</h3>
+          <div class="grid two">
+            <label>
+              Cost Tokens
+              <input id="move1Cost" type="text" maxlength="20" />
+            </label>
+            <label>
+              Move Name
+              <input id="move1Name" type="text" maxlength="24" />
+            </label>
+            <label class="wide">
+              Move Text
+              <textarea id="move1Text" rows="2" maxlength="180"></textarea>
+            </label>
+          </div>
+
+          <h3>Attack 2</h3>
+          <div class="grid two">
+            <label>
+              Cost Tokens
+              <input id="move2Cost" type="text" maxlength="20" />
+            </label>
+            <label>
+              Move Name
+              <input id="move2Name" type="text" maxlength="24" />
+            </label>
+            <label>
+              Damage
+              <div class="inline-pair">
+                <input id="move2DamageRange" type="range" min="0" max="300" />
+                <input id="move2Damage" type="number" min="0" max="300" />
+              </div>
+            </label>
+            <label class="wide">
+              Move Text
+              <textarea id="move2Text" rows="2" maxlength="180"></textarea>
+            </label>
+          </div>
+
+          <h3>Footer</h3>
+          <div class="grid two">
+            <label>
+              Weakness
+              <input id="weakness" type="text" maxlength="18" />
+            </label>
+            <label>
+              Resistance
+              <input id="resistance" type="text" maxlength="18" />
+            </label>
+            <label>
+              Retreat
+              <input id="retreat" type="text" maxlength="18" />
+            </label>
+            <label>
+              Year
+              <input id="yearText" type="text" maxlength="6" />
+            </label>
+            <label class="wide">
+              Flavor Ribbon Text
+              <textarea id="flavorText" rows="2" maxlength="160"></textarea>
+            </label>
+            <label>
+              Illustrator
+              <input id="illustrator" type="text" maxlength="40" />
+            </label>
+            <label>
+              Collector Number
+              <input id="collectorNumber" type="text" maxlength="12" />
+            </label>
+          </div>
+
+          <h3>Visual Tuning</h3>
+          <div class="grid two">
+            <label>
+              Hue Shift
+              <input id="hueShift" type="range" min="-35" max="35" />
+            </label>
+            <label>
+              Saturation
+              <input id="saturation" type="range" min="60" max="150" />
+            </label>
+            <label>
+              Texture Intensity
+              <input id="texture" type="range" min="0" max="100" />
+            </label>
+            <label>
+              Corner Radius
+              <input id="cornerRadius" type="range" min="20" max="56" />
+            </label>
+            <label>
+              Export Scale
+              <select id="exportScale">
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+                <option value="5">5x</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel preview">
+          <h2>Live Preview</h2>
+          <p class="preview-note">Rendered on canvas using the reference card proportions (734 x 1024).</p>
+          <div class="preview-frame">
+            <canvas
+              id="cardCanvas"
+              width="734"
+              height="1024"
+              role="img"
+              aria-label="Trading card preview"
+            ></canvas>
+          </div>
+          <div class="preview-actions">
+            <button id="exportPng" type="button">Export PNG</button>
+            <button id="exportJpg" type="button">Export JPEG</button>
+            <button id="resetCard" type="button">Reset to Default</button>
+          </div>
+          <p id="statusMessage" class="status" aria-live="polite"></p>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
